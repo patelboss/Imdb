@@ -1,4 +1,3 @@
-from health_check import app as health_check_app
 import logging
 from telegram import Update, Chat
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
@@ -45,7 +44,7 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
             else:
                 update.message.reply_text(reply_message)
 
-            logging.info(f"'{content}':\n {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}")
+            logging.info(f"IMDb search results for '{content}': {title}, Release Date: {release_date}, Rating: {rating}, Summary: {summary}")
         else:
             update.message.reply_text(f"No IMDb results found for '{content}'.")
             logging.warning(f"No IMDb results found for '{content}'.")
@@ -59,11 +58,9 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
 
-    updater.start_polling()
+    # Start the bot listening on port 8080
+    updater.start_webhook(listen="0.0.0.0", port=8080, url_path=TELEGRAM_BOT_TOKEN)
     updater.idle()
 
 if __name__ == '__main__':
     main()
-
-
-health_check_app.run(host='0.0.0.0', port=8080)  # Run Flask app for health check
