@@ -1,4 +1,4 @@
-import logger
+from my_logging import logger
 import requests
 from bs4 import BeautifulSoup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputTextMessageContent
