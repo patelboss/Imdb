@@ -24,7 +24,7 @@ def search_imdb(query):
 # Define inline query handler
 def inline_query(update, context):
     query = update.inline_query.query
-    results = []
+    logger.info(f"Received inline query: {query}")
 
     if query:
         imdb_results = search_imdb(query)
@@ -33,6 +33,7 @@ def inline_query(update, context):
             title = result['title']
             summary = result['summary']
             imdb_url = result['imdb_url']
+
 
             message_content = InputTextMessageContent(f"{title}\n\n{summary}")
             reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("View on IMDb", url=imdb_url)]])
