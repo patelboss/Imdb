@@ -1,7 +1,7 @@
 import logging
 
 # Set up logging
-logging.basicConfig(filename='bot.py',
+logging.basicConfig(filename='bot.log',
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
