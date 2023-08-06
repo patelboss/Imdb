@@ -1,6 +1,6 @@
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-
+from imdb import IMDb
 # Define your bot's token
 TOKEN = '1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo'
 
@@ -11,11 +11,27 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
     content = update.message.text
     # Extract content between { and }
     content = content[content.find('{')+1:content.find('}')]
-    # Search IMDb using 'content' and retrieve results
-    # Perform IMDb search here
 
-    # Send IMDb search results to the group
-    update.message.reply_text("IMDb search results: ...")
+    # Search IMDb using 'content' and retrieve results
+    ia = IMDb()
+    search_results = ia.search_movie(content)
+    
+    if search_results:
+        # Get the first search result (you can modify this to show more results)
+        first_result = search_results[0]
+        title = first_result['title']
+        year = first_result['year']
+        rating = first_result.get('rating', 'N/A')
+        summary = first_result.get('plot outline', 'No summary available')
+
+        # Compose IMDb search results
+        reply_message = f"IMDb search results for '{content}':\n"
+        reply_message += f"Title: {title}\nYear: {year}\nRating: {rating}\nSummary: {summary}"
+
+        # Send IMDb search results to the group
+        update.message.reply_text(reply_message)
+    else:
+        update.message.reply_text("No IMDb results found for '{content}'.")
 
 def main():
     updater = Updater(TOKEN, use_context=True)
