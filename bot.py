@@ -63,7 +63,7 @@ def main():
     dispatcher.add_handler(inline_query_handler)
 
     # Set up group message handler
-    group_message_handler = MessageHandler(Filters.group & Filters.text, group_message)
+    group_message_handler = MessageHandler(Filters.chat_type.groups & Filters.text, group_message)
     dispatcher.add_handler(group_message_handler)
 
     # Start the bot
