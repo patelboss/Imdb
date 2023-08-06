@@ -57,7 +57,7 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
 
     # Set up the webhook
-    updater.start_webhook(listen="0.0.0.0", port=8080, url_path=TELEGRAM_BOT_TOKEN)
+    updater.start_webhook(listen="0.0.0.0", port=80, url_path=TELEGRAM_BOT_TOKEN)
 
     # Run the bot until you send a signal to stop (e.g., Ctrl+C)
     updater.idle()
