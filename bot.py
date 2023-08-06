@@ -44,12 +44,10 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
             else:
                 update.message.reply_text(reply_message)
 
-            logging.info(f"IMDb search results for '{content}': {title}, Release Date: {release_date}, Rating: {rating}, Summary: {summary}")
+            logging.info(f"'{content}':\n {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}")
         else:
             update.message.reply_text(f"No IMDb results found for '{content}'.")
             logging.warning(f"No IMDb results found for '{content}'.")
-    else:
-        logging.warning("Received an empty or non-text message.")
 
 def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
@@ -58,8 +56,10 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
 
-    # Start the bot listening on port 8080
-    updater.start_webhook(listen="0.0.0.0", port=80, url_path=TELEGRAM_BOT_TOKEN)
+    # Set up the webhook
+    updater.start_webhook(listen="0.0.0.0", port=8080, url_path=TELEGRAM_BOT_TOKEN)
+
+    # Run the bot until you send a signal to stop (e.g., Ctrl+C)
     updater.idle()
 
 if __name__ == '__main__':
