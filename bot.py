@@ -59,7 +59,7 @@ def main():
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
 
     # Start the bot listening on port 8080
-    updater.start_webhook(listen="0.0.0.0", port=8080, url_path=TELEGRAM_BOT_TOKEN)
+    updater.start_webhook(listen="0.0.0.0", port=80, url_path=TELEGRAM_BOT_TOKEN)
     updater.idle()
 
 if __name__ == '__main__':
