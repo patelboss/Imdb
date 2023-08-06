@@ -5,17 +5,10 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-# Fixing the typo in the file name, changing "requirements.txt" to "/requirements.txt"
-COPY requirements.txt /requirements.txt
-
-# Change the directory to root directory
-RUN cd /
-
-# Upgrade pip and install the required packages specified in requirements.txt
-# Adding "&&" to combine two commands into one, and removing the "-U" flag as it is unnecessary
-RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
+COPY . /app
 
 # Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
