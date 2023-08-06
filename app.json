@@ -1,0 +1,19 @@
+{
+  "name": "telegram-bot",
+  "image": "koyeb/python:3.9",
+  "command": ["python", "bot.py"],
+  "environments": {
+    "TELEGRAM_BOT_TOKEN": {
+      "type": "env",
+      "description": "Telegram Bot API Token"
+    }
+  },
+  "port": 8080,
+  "healthchecks": [
+    {
+      "path": "/health",
+      "interval": "1m",
+      "timeout": "5s"
+    }
+  ]
+}
