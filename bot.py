@@ -10,10 +10,11 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
 
 def reply_to_content(update: Update, context: CallbackContext) -> None:
-    content = update.message.text
-    # Extract content between { and }
-    content = content[content.find('{')+1:content.find('}')]
-
+    if update.message and update.message.text:
+        content = update.message.text
+        # Extract content between { and }
+        content = content[content.find('{')+1:content.find('}')]
+        
     # Search IMDb using 'content' and retrieve results
     ia = IMDb()
     search_results = ia.search_movie(content)
@@ -34,12 +35,7 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
         if update.message.chat.type == Chat.CHANNEL:
             context.bot.send_message(update.message.chat_id, reply_message)
         else:
-            update.message.reply_text(reply_message)
-
-        logging.info(f" '{content}':\n {title}\nRelease Date: {release_date}\n Rating: {rating}")
-    else:
-        update.message.reply_text(f"No IMDb results found for '{content}'.")
-        logging.warning(f"No IMDb results found for '{content}'.")
+        logging.warning("Received an empty or non-text message.")
 def main():
     updater = Updater(TOKEN, use_context=True)
     dispatcher = updater.dispatcher
