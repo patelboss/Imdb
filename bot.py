@@ -1,6 +1,7 @@
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from imdb import IMDb
+from health_check import app as health_check_app
 # Define your bot's token
 TOKEN = '1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo'
 
@@ -45,3 +46,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+health_check_app.run(host='0.0.0.0', port=8080)  # Run Flask app for health check
