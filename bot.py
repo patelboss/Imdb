@@ -38,18 +38,28 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
             reply_message = f"IMDb search results for '{content}':\n"
             reply_message += f"Title: {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}"
 
-            # Send IMDb search results to the appropriate chat
-            if update.message.chat.type == Chat.CHANNEL:
-                context.bot.send_message(update.message.chat_id, reply_message)
-            else:
-                update.message.reply_text(reply_message)
+            # Check if the response violates the safety guidelines
+            if not any(word in reply_message for word in safety_guidelines):
+                # Send IMDb search results to the appropriate chat
+                if update.message.chat.type == Chat.CHANNEL:
+                    context.bot.send_message(update.message.chat_id, reply_message)
+                else:
+                    update.message.reply_text(reply_message)
 
-            logging.info(f"IMDb search results for '{content}': {title}, Release Date: {release_date}, Rating: {rating}, Summary: {summary}")
+                logging.info(f"IMDb search results for '{content}': {title}, Release Date: {release_date}, Rating: {rating}, Summary: {summary}")
+            else:
+                update.message.reply_text(
+                    "Sorry, I can't send this message because it violates the safety guidelines."
+                )
+                logging.warning(
+                    f"Not sending IMDb search results for '{content}' because it violates the safety guidelines."
+                )
         else:
             update.message.reply_text(f"No IMDb results found for '{content}'.")
             logging.warning(f"No IMDb results found for '{content}'.")
     else:
         logging.warning("Received an empty or non-text message.")
+
 
 def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
