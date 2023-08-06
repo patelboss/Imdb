@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputTextMessageContent
 from telegram.ext import Updater, InlineQueryHandler
 from utils.imdb_utils import search_imdb
+import logging
 
 # Set up logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
