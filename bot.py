@@ -13,8 +13,12 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
 
+# Safety guidelines
+safety_guidelines = ["bad word", "offensive phrase"]
+
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
+    logging.info("Bot started.")
 
 def reply_to_content(update: Update, context: CallbackContext) -> None:
     if update.message and update.message.text:
@@ -60,7 +64,6 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
     else:
         logging.warning("Received an empty or non-text message.")
 
-
 def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
@@ -73,3 +76,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+  
