@@ -92,40 +92,42 @@ async def iter_messages(
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
   
+
 def reply_to_content(update: Update, context: CallbackContext) -> None:
     if update.message and update.message.text:
         content = update.message.text
-        # Extract content between { and }
-        content = content[content.find('{')+1:content.find('}')]
 
         # Search IMDb using 'content' and retrieve results
         ia = IMDb()
         search_results = ia.search_movie(content)
         
         if search_results:
-            # Get the first search result (you can modify this to show more results)
-            first_result = search_results[0]
-            title = first_result['title']
-            release_date = first_result.get('release date', 'N/A')
-            rating = first_result.get('rating', 'N/A')
-            summary = first_result.get('plot outline', 'No summary available')
-
-            # Compose IMDb search results
+            # Get the first three search results
+            first_three_results = search_results[:3]
             reply_message = f"IMDb search results for '{content}':\n"
-            reply_message += f"Title: {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}"
+            for result in first_three_results:
+                title = result['title']
+                release_date = result.get('release date', 'N/A')
+                rating = result.get('rating', 'N/A')
+                summary = result.get('plot outline', 'No summary available')
+
+                reply_message += f"\nTitle: {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}"
 
             # Send IMDb search results to the appropriate chat
-            if update.message.chat.type == Chat.CHANNEL:
-                context.bot.send_message(update.message.chat_id, reply_message)
-            else:
+            if update.message.chat.type == Chat.PRIVATE or update.message.chat.type == Chat.GROUP:
                 update.message.reply_text(reply_message)
+            else:
+                logging.warning(f"Not replying to channel '{update.message.chat.id}'.")
 
             logging.info(f"'{content}':\n {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}")
         else:
             update.message.reply_text(f"No IMDb results found for '{content}'.")
             logging.warning(f"No IMDb results found for '{content}'.")
+
     else:
         logging.warning("Received an empty or non-text message.")
+
+
 
 def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
