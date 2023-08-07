@@ -71,13 +71,3 @@ def keep_bot_alive():
     while True:
         app.send_message(chat_id="@vdhsmdm", text="Bot is active and running!")
         app.loop.run_until_complete(asyncio.sleep(3600))  # Sleep for 1 hour
-
-if __name__ == "__main__":
-    # Start the bot and run the event loop
-    app.start()
-    
-    # Start the keep-alive loop in a separate thread
-    import threading
-    import asyncio
-    alive_thread = threading.Thread(target=keep_bot_alive)
-    alive_thread.start()
