@@ -132,9 +132,9 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_text)
-
-    updater.start_polling()
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_text))
+   
+ updater.start_polling()
     updater.idle()
   
 if __name__ == '__main__':
