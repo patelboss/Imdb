@@ -13,7 +13,7 @@ from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from aiohttp import web
 from plugins import web_server
-from info import BOT_TOKEN, API_ID, API_HASH, BOT_TOKEN, LOG_STR
+from info import BOT_TOKEN, API_ID, API_HASH
 PORT = "8080"
 
 class Bot(Client):
