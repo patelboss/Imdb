@@ -21,7 +21,6 @@ class Bot(Client):
     def __init__(self):
         super().__init__(
             bot_token=BOT_TOKEN,
-            name=SESSION,
             api_id=API_ID,
             api_hash=API_HASH,
             workers=50,
