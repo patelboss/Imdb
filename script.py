@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Initialize Pyrogram client
-API_ID = 4063950
-API_HASH = 5ebe4b5c0a2af776bf5d2e52d7f5aaa4
-BOT_TOKEN = 1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo
+API_ID = '4063950'
+API_HASH = '5ebe4b5c0a2af776bf5d2e52d7f5aaa4'
+BOT_TOKEN = '1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo'
 
 
 app = Client(
