@@ -13,7 +13,7 @@
     "website": "https://github.com/patelboss/Imdb",
     "repository": "https://github.com/patelboss/Imdb",
     "env": {
-        "TELEGRAM_BOT_TOKEN": {
+        "BOT_TOKEN": {
             "description": "Your bot token.",
             "required": true
         }
