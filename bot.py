@@ -20,7 +20,6 @@ if not TELEGRAM_BOT_TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
         # Search IMDb using 'content' and retrieve results
 
-async def start(self):
 class Bot(Client):
 
     def __init__(self):
