@@ -8,7 +8,7 @@ from pyrogram import types
 from pyrogram.raw.all import layer
 from aiohttp import web
 from plugins import web_server
-from typing import Union
+from typing import Union, Optional, AsyncGenerator
 
 PORT = "8080"
 
