@@ -3,6 +3,13 @@ from telegram import Update, Chat
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from imdb import IMDb
 import os
+from pyrogram import Client, __version__
+from pyrogram.raw.all import layer
+from info import SESSION, API_ID, API_HASH, BOT_TOKEN, LOG_STR
+from aiohttp import web
+from plugins import web_server
+
+PORT = "8080"
 
 # Set up logging
 logging.basicConfig(level=logging.INFO,
@@ -12,14 +19,25 @@ logging.basicConfig(level=logging.INFO,
 TELEGRAM_BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
+async def start(self):
+  temp.ME = me.id
+        temp.U_NAME = me.username
+        temp.B_NAME = me.first_name
+        self.username = '@' + me.username
+         me = await self.get_me()
+      await super().start()
+  
+        app = web.AppRunner(await web_server())
+        await app.setup()
+        bind_address = "0.0.0.0"
+        await web.TCPSite(app, bind_address, PORT).start()
+        logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
+        
 
-# Safety guidelines
-safety_guidelines = ["bad word", "offensive phrase"]
-
-def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
-    logging.info("Bot started.")
-
+    async def stop(self, *args):
+        await super().stop()
+        logging.info("Bot stopped. Bye."
+                     
 def reply_to_content(update: Update, context: CallbackContext) -> None:
     if update.message and update.message.text:
         content = update.message.text
