@@ -44,8 +44,7 @@ class Bot(Client):
         bind_address = "0.0.0.0"
         await web.TCPSite(app, bind_address, PORT).start()
         logging.info("Bot Running Now")
-        logging.info(LOG_STR)
-
+       
     async def stop(self, *args):
         await super().stop()
         logging.info("Bot stopped. Bye.")
@@ -118,15 +117,14 @@ def reply_to_text(update: Update, context: CallbackContext) -> None:
                     reply_message += f"\nTitle: {title}\nRelease Date: {release_date}"
 
                 # Send IMDb search results to the appropriate chat
-                update.message.reply_text(reply_message)
+                context.bot.send_message(chat_id=update.message.chat_id, text=reply_message)
             else:
-                # No search results found, do not reply
-                update.message.reply_text("No Queries Related {text} ")
+                # No search results found, send a message indicating no queries are related
+                context.bot.send_message(chat_id=update.message.chat_id, text=f"No Queries Related {search_text}")
         else:
             pass
     else:
         pass
-
 
 
 def main():
