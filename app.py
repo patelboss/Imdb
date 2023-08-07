@@ -4,14 +4,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from imdb import IMDb
 import os
 import re
-from pyrogram import Client, __version__
-from pyrogram import types
-from pyrogram.raw.all import layer
-from aiohttp import web
-from plugins import web_server
-from typing import Union, Optional, AsyncGenerator
-
-PORT = "8080"
 
 # Set up logging
 logging.basicConfig(level=logging.INFO,
@@ -21,18 +13,15 @@ logging.basicConfig(level=logging.INFO,
 TELEGRAM_BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not TELEGRAM_BOT_TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
-        # Search IMDb using 'content' and retrieve results
 
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
-  
 
 def reply_to_text(update: Update, context: CallbackContext) -> None:
     if update.message and update.message.text:
         content = update.message.text
 
         # Extract text between $ and & using regular expressions
-        import re
         match = re.search(r'\$(.*?)\&', content)
         if match:
             search_text = match.group(1)
@@ -48,8 +37,14 @@ def reply_to_text(update: Update, context: CallbackContext) -> None:
                 for result in first_three_results:
                     title = result['title']
                     release_date = result.get('release date', 'N/A')
+                    release_year = result.get('year', 'N/A')
 
-                    reply_message += f"\nTitle: {title}\nRelease Date: {release_date}"
+                    if release_date != 'N/A':
+                        release_info = f"Release Date: {release_date}"
+                    else:
+                        release_info = f"Release Year: {release_year}"
+
+                    reply_message += f"\nTitle: {title}\n{release_info}"
 
                 # Send IMDb search results to the appropriate chat
                 context.bot.send_message(chat_id=update.message.chat_id, text=reply_message)
@@ -61,7 +56,6 @@ def reply_to_text(update: Update, context: CallbackContext) -> None:
     else:
         pass
 
-
 def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
@@ -71,7 +65,6 @@ def main():
 
     updater.start_polling()
     updater.idle()
-  
+
 if __name__ == '__main__':
     main()
-  
