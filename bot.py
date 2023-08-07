@@ -4,9 +4,11 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from imdb import IMDb
 import os
 from pyrogram import Client, __version__
+from pyrogram import types
 from pyrogram.raw.all import layer
 from aiohttp import web
 from plugins import web_server
+from typing import Union
 
 PORT = "8080"
 
