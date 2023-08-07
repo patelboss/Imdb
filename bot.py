@@ -93,39 +93,39 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
   
 
-def reply_to_content(update: Update, context: CallbackContext) -> None:
+def reply_to_text(update: Update, context: CallbackContext) -> None:
     if update.message and update.message.text:
         content = update.message.text
 
-        # Search IMDb using 'content' and retrieve results
-        ia = IMDb()
-        search_results = ia.search_movie(content)
-        
-        if search_results:
-            # Get the first three search results
-            first_three_results = search_results[:3]
-            reply_message = f"IMDb search results for '{content}':\n"
-            for result in first_three_results:
-                title = result['title']
-                release_date = result.get('release date', 'N/A')
-                rating = result.get('rating', 'N/A')
-                summary = result.get('plot outline', 'No summary available')
+        # Extract text between $ and & using regular expressions
+        import re
+        match = re.search(r'\$(.*?)\&', content)
+        if match:
+            search_text = match.group(1)
 
-                reply_message += f"\nTitle: {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}"
+            # Search IMDb using 'search_text' and retrieve results
+            ia = IMDb()
+            search_results = ia.search_movie(search_text)
 
-            # Send IMDb search results to the appropriate chat
-            if update.message.chat.type == Chat.PRIVATE or update.message.chat.type == Chat.GROUP:
+            if search_results:
+                # Get the first three search results
+                first_three_results = search_results[:3]
+                reply_message = f"IMDb search results for '{search_text}':\n"
+                for result in first_three_results:
+                    title = result['title']
+                    release_date = result.get('release date', 'N/A')
+
+                    reply_message += f"\nTitle: {title}\nRelease Date: {release_date}"
+
+                # Send IMDb search results to the appropriate chat
                 update.message.reply_text(reply_message)
             else:
-                logging.warning(f"Not replying to channel '{update.message.chat.id}'.")
-
-            logging.info(f"'{content}':\n {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}")
+                # No search results found, do not reply
+                update.message.reply_text("No Queries Related {text} ")
         else:
-            update.message.reply_text(f"No IMDb results found for '{content}'.")
-            logging.warning(f"No IMDb results found for '{content}'.")
-
+            pass
     else:
-        logging.warning("Received an empty or non-text message.")
+        pass
 
 
 
