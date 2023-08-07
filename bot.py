@@ -12,7 +12,7 @@ from pyrogram.raw.all import layer
 from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from aiohttp import web
-from plugin import web_server
+from plugins import web_server
 
 PORT = "8080"
 
@@ -20,7 +20,7 @@ class Bot(Client):
 
     def __init__(self):
         super().__init__(
-            bot_token=BOT_TOKEN,
+            bot_token=TELEGRAM_BOT_TOKEN,
             workers=50,
             plugins={"root": "plugins"},
             sleep_threshold=5,
