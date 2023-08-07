@@ -111,8 +111,7 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
                 reply_message += f"{title} ({release_date}) ({rating})\n"
 
             # Send IMDb search results to the appropriate chat
-            chat_id = update.message.chat_id
-            if chat_id.is_channel:
+            if isinstance(chat_id, types.Chat.Channel):
                 context.bot.send_message(chat_id, reply_message)
             else:
                 update.message.reply_text(reply_message)
