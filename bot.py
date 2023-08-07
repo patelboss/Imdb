@@ -12,11 +12,11 @@ from plugins import web_server
 PORT = "8080"
 class Bot(Client):
 
-async def start(self):
-  temp.ME = me.id
+   async def start(self):
+            temp.ME = me.id
         temp.U_NAME = me.username
         temp.B_NAME = me.first_name
-        self.username = '@' + me.username
+      self.username = '@' + me.username
          me = await self.get_me()
       await super().start()
   
@@ -27,9 +27,10 @@ async def start(self):
         logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
         
 
- async def stop(self, *args):
+  async def stop(self, args):
         await super().stop()
         logging.info("Bot stopped. Bye.")
+   
   async def iter_messages(
         self,
         chat_id: Union[int, str],
