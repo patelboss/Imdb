@@ -12,7 +12,7 @@ from pyrogram.raw.all import layer
 from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from aiohttp import web
-import web_server
+from plugin import web_server
 
 PORT = "8080"
 
