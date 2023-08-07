@@ -23,7 +23,7 @@ if not TELEGRAM_BOT_TOKEN:
 
 async def start(self):
     # Code for the start function
-
+      await super().start()
     # Global variables
     temp.ME = me.id
     temp.U_NAME = me.username
@@ -35,11 +35,10 @@ async def start(self):
     bind_address = "0.0.0.0"
     await web.TCPSite(app, bind_address, PORT).start()
     logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
-        
 
-  async def stop(self, args):
-        await super().stop()
-        logging.info("Bot stopped. Bye.")
+async def stop(self, args):
+       await super().stop()
+    # Code for the stop function
    
   async def iter_messages(
         self,
