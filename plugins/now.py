@@ -1,17 +1,34 @@
+import os
 from pyrogram import Client, filters, enums
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
+import time
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
-# Replace with your IMDb API function
-async def get_poster(title, bulk=False):
-    # Implement your IMDb API call logic here
-    pass
 
-app = Client("imdb_bot", api_id="4063950", api_hash="5ebe4b5c0a2af776bf5d2e52d7f5aaa4", bot_token="1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo")
+@Client.on_message(filters.command(["imdb", 'search']))
+async def imdb_search(client, message):
+    if ' ' in message.text:
+        k = await message.reply('Searching ImDB')
+        r, title = message.text.split(None, 1)
+        movies = await get_poster(title, bulk=True)
+        if not movies:
+            return await message.reply("No results Found")
+        btn = [
+            [
+                InlineKeyboardButton(
+                    text=f"{movie.get('title')} - {movie.get('year')}",
+                    callback_data=f"imdb#{movie.movieID}",
+                )
+            ]
+            for movie in movies
+        ]
+        await k.edit('Here is what i found on IMDb', reply_markup=InlineKeyboardMarkup(btn))
+    else:
+        await message.reply('Give me a movie / series Name')
 
-Client.on_callback_query(filters.regex('^imdb'))
+@Client.on_callback_query(filters.regex('^imdb'))
 async def imdb_callback(bot: Client, quer_y: CallbackQuery):
     i, movie = quer_y.data.split('#')
     imdb = await get_poster(query=movie, id=True)
@@ -72,6 +89,8 @@ async def imdb_callback(bot: Client, quer_y: CallbackQuery):
     else:
         await quer_y.message.edit(caption, reply_markup=InlineKeyboardMarkup(btn), disable_web_page_preview=False)
     await quer_y.answer()
+
+    
 
 @app.on_message(filters.text & filters.regex(r'^\$.*&$'))
 async def dollar_sign_text(bot, message):
