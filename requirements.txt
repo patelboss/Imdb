@@ -14,3 +14,12 @@ dnspython
 starlette~=0.20.0
 uvicorn~=0.17.0
 asyncio
+typing
+pyrogram==2.0.35
+tgcrypto
+motor==2.5.1
+marshmallow==3.14.1
+requests
+bs4
+pynewtonmath
+openai
