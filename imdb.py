@@ -4,7 +4,7 @@ import re
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from imdb import IMDb
-from dotenv import load_dotenv
+from config import API_ID, API_HASH, BOT_TOKEN
 
 # Load environment variables from config.env
 load_dotenv()
@@ -12,14 +12,6 @@ load_dotenv()
 # Set up logging
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-# Initialize Pyrogram client
-API_ID = os.getenv("API_ID")
-API_HASH = os.getenv("API_HASH")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-
-if not all([API_ID, API_HASH, BOT_TOKEN]):
-    raise ValueError("API_ID, API_HASH, and BOT_TOKEN environment variables must be set.")
 
 app = Client(
     "imdb_bot",
