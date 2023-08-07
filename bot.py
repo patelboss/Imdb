@@ -5,7 +5,6 @@ from imdb import IMDb
 import os
 from pyrogram import Client, __version__
 from pyrogram.raw.all import layer
-from info import SESSION, API_ID, API_HASH, BOT_TOKEN, LOG_STR
 from aiohttp import web
 from plugins import web_server
 
@@ -39,7 +38,7 @@ async def stop(self, args):
        await super().stop()
       logging.info("Bot stopped. Bye.")
    
-  async def iter_messages(
+async def iter_messages(
         self,
         chat_id: Union[int, str],
         limit: int,
