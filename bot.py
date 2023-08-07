@@ -13,7 +13,7 @@ from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from aiohttp import web
 from plugins import web_server
-from info import BOT_TOKEN
+from info import BOT_TOKEN, API_ID, API_HASH, BOT_TOKEN, LOG_STR
 PORT = "8080"
 
 class Bot(Client):
@@ -21,8 +21,11 @@ class Bot(Client):
     def __init__(self):
         super().__init__(
             bot_token=BOT_TOKEN,
+            name=SESSION,
+            api_id=API_ID,
+            api_hash=API_HASH,
             workers=50,
-            name="IMDb",
+            
             plugins={"root": "plugins"},
             sleep_threshold=5,
         )
