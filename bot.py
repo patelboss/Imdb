@@ -129,7 +129,9 @@ def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(CommandHandler("start", start))
+    def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text("Welcome to the IMDb bot! I can search for IMDb movies.")
+
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
 
     updater.start_polling()
