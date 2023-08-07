@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -15,6 +16,9 @@ app = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN
 )
+
+# Log when the bot starts
+logging.info("Bot started. Listening for commands and messages...")
 
 def start_command(update, context):
     update.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
@@ -62,5 +66,18 @@ def reply_to_text(client, message):
 def help_command(update, context):
     update.reply_text("Send me a message containing text between $ and & to search on IMDb.")
 
+def keep_bot_alive():
+    # Send a "ping" message at regular intervals to keep the bot active
+    while True:
+        app.send_message(chat_id="@vdhsmdm", text="Bot is active and running!")
+        app.loop.run_until_complete(asyncio.sleep(3600))  # Sleep for 1 hour
+
 if __name__ == "__main__":
-    app.run()
+    # Start the bot and run the event loop
+    app.start()
+    
+    # Start the keep-alive loop in a separate thread
+    import threading
+    import asyncio
+    alive_thread = threading.Thread(target=keep_bot_alive)
+    alive_thread.start()
