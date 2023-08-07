@@ -21,21 +21,20 @@ if not TELEGRAM_BOT_TOKEN:
     raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
         # Search IMDb using 'content' and retrieve results
 
-class Bot(Client):
+async def start(self):
+    # Code for the start function
 
-   async def start(self):
-            temp.ME = me.id
-        temp.U_NAME = me.username
-        temp.B_NAME = me.first_name
-      self.username = '@' + me.username
-         me = await self.get_me()
-      await super().start()
-  
-        app = web.AppRunner(await web_server())
-        await app.setup()
-        bind_address = "0.0.0.0"
-        await web.TCPSite(app, bind_address, PORT).start()
-        logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
+    # Global variables
+    temp.ME = me.id
+    temp.U_NAME = me.username
+    temp.B_NAME = me.first_name
+
+    # Start the web server
+    app = web.AppRunner(await web_server())
+    await app.setup()
+    bind_address = "0.0.0.0"
+    await web.TCPSite(app, bind_address, PORT).start()
+    logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
         
 
   async def stop(self, args):
