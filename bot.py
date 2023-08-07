@@ -100,33 +100,25 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
         search_results = ia.search_movie(content)
         
         if search_results:
-            # Get the first search result (you can modify this to show more results)
-            first_result = search_results[0]
-            title = first_result['title']
-            release_date = first_result.get('release date', 'N/A')
-            rating = first_result.get('rating', 'N/A')
-            summary = first_result.get('plot outline', 'No summary available')
+            # Get the first three search results
+            top_three_results = search_results[:3]
 
             # Compose IMDb search results
-            reply_message = f"IMDb search results for '{content}':\n"
-            reply_message += f"Title: {title}\nRelease Date: {release_date}\nRating: {rating}\nSummary: {summary}"
+            reply_message = ""
+            for result in top_three_results:
+                title = result['title']
+                release_date = result.get('release date', 'N/A')
+                rating = result.get('rating', 'N/A')
+                reply_message += f"{title} ({release_date}) ({rating})\n"
 
-            # Check if the response violates the safety guidelines
-            if not any(word in reply_message for word in safety_guidelines):
-                # Send IMDb search results to the appropriate chat
-                if update.message.chat.type == Chat.CHANNEL:
-                    context.bot.send_message(update.message.chat_id, reply_message)
-                else:
-                    update.message.reply_text(reply_message)
-
-                logging.info(f"IMDb search results for '{content}': {title}, Release Date: {release_date}, Rating: {rating}, Summary: {summary}")
+            # Send IMDb search results to the appropriate chat
+            chat_id = update.message.chat_id
+            if chat_id.is_channel:
+                context.bot.send_message(chat_id, reply_message)
             else:
-                update.message.reply_text(
-                    "Sorry, I can't send this message because it violates the safety guidelines."
-                )
-                logging.warning(
-                    f"Not sending IMDb search results for '{content}' because it violates the safety guidelines."
-                )
+                update.message.reply_text(reply_message)
+
+            logging.info(f"IMDb search results for '{content}': {reply_message}")
         else:
             update.message.reply_text(f"No IMDb results found for '{content}'.")
             logging.warning(f"No IMDb results found for '{content}'.")
@@ -142,7 +134,7 @@ def main():
 
     updater.start_polling()
     updater.idle()
-
+  
 if __name__ == '__main__':
     main()
   
