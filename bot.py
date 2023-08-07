@@ -88,7 +88,6 @@ async def iter_messages(
             for message in messages:
                 yield message
                 current += 1
-
                      
 def reply_to_content(update: Update, context: CallbackContext) -> None:
     if update.message and update.message.text:
@@ -125,13 +124,17 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
     else:
         logging.warning("Received an empty or non-text message.")
 
+def start(update: Update, context: CallbackContext) -> None:
+    """Send a welcome message."""
+    update.message.reply_text("Welcome to the IMDb bot! I can search for IMDb movies.")
+  
+
 def main():
     updater = Updater(TELEGRAM_BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
-
-    def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text("Welcome to the IMDb bot! I can search for IMDb movies.")
-
+     
+  
+    dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
 
     updater.start_polling()
