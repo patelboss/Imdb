@@ -3,6 +3,7 @@ from telegram import Update, Chat
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from imdb import IMDb
 import os
+import re
 from pyrogram import Client, __version__
 from pyrogram import types
 from pyrogram.raw.all import layer
@@ -133,8 +134,8 @@ def main():
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_text))
-   
- updater.start_polling()
+
+    updater.start_polling()
     updater.idle()
   
 if __name__ == '__main__':
