@@ -21,22 +21,33 @@ if not TELEGRAM_BOT_TOKEN:
         # Search IMDb using 'content' and retrieve results
 
 async def start(self):
-      await super().start()
+class Bot(Client):
 
-    temp.ME = me.id
-    temp.U_NAME = me.username
-    temp.B_NAME = me.first_name
+    def __init__(self):
+        super().__init__(
+            name=SESSION,
+            api_id=API_ID,
+            api_hash=API_HASH,
+            bot_token=BOT_TOKEN,
+            workers=50,
+            plugins={"root": "plugins"},
+            sleep_threshold=5,
+        )
 
-    # Start the web server
-    app = web.AppRunner(await web_server())
-    await app.setup()
-    bind_address = "0.0.0.0"
-    await web.TCPSite(app, bind_address, PORT).start()
-    logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
+    async def start(self):
+        await super().start()
+        await Media.ensure_indexes()
+        me = await self.get_me()
+        app = web.AppRunner(await web_server())
+        await app.setup()
+        bind_address = "0.0.0.0"
+        await web.TCPSite(app, bind_address, PORT).start()
+        logging.info("Bot Running Now")
+        logging.info(LOG_STR)
 
-async def stop(self, args):
-       await super().stop()
-      logging.info("Bot stopped. Bye.")
+    async def stop(self, *args):
+        await super().stop()
+        logging.info("Bot stopped. Bye.")
    
 async def iter_messages(
         self,
