@@ -13,14 +13,14 @@ from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from aiohttp import web
 from plugins import web_server
-
+from info import BOT_TOKEN
 PORT = "8080"
 
 class Bot(Client):
 
     def __init__(self):
         super().__init__(
-            bot_token=TELEGRAM_BOT_TOKEN,
+            bot_token=BOT_TOKEN,
             workers=50,
             plugins={"root": "plugins"},
             sleep_threshold=5,
