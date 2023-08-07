@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Replace with your own bot token
-TOKEN = 'your_bot_token_here'
+TOKEN = '1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo'
 
 def start(update, context):
     update.message.reply_text("Hello! I'm your IMDb bot. Send me a message with text between $ and & to get IMDb top three results.")
@@ -60,6 +60,3 @@ def main():
     
     updater.start_polling()
     updater.idle()
-
-if __name__ == '__main__':
-    main()
