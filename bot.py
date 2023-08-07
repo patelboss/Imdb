@@ -23,8 +23,6 @@ if not TELEGRAM_BOT_TOKEN:
 
 async def start(self):
       await super().start()
-    logging.info("Bot starting. hello .")
-
 
     temp.ME = me.id
     temp.U_NAME = me.username
