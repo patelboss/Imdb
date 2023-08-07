@@ -134,7 +134,7 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_content))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_to_text)
 
     updater.start_polling()
     updater.idle()
