@@ -1,59 +1,78 @@
+import logging
 import os
-import pyrogram
+import re
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from imdb import IMDb
+from dotenv import load_dotenv
 
-def get_api_id():
-  """Get the api_id from the config.env file."""
-  api_id = os.environ.get('API_ID')
-  if api_id is None:
-    raise Exception('API_ID not found in config.env file.')
-  return api_id
+# Load environment variables from config.env
+load_dotenv()
 
-def get_api_hash():
-  """Get the api_hash from the config.env file."""
-  api_hash = os.environ.get('API_HASH')
-  if api_hash is None:
-    raise Exception('API_HASH not found in config.env file.')
-  return api_hash
+# Set up logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-def get_bot_token():
-  """Get the bot token from the config.env file."""
-  bot_token = os.environ.get('BOT_TOKEN')
-  if bot_token is None:
-    raise Exception('BOT_TOKEN not found in config.env file.')
-  return bot_token
+# Initialize Pyrogram client
+API_ID = os.getenv("API_ID")
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-def get_imdb_top_three(query):
-  """Get the top three IMDb results for the given query."""
-  url = 'https://www.imdb.com/search/title?title_type=feature&sort=num_votes,desc&count=3&title=' + query
-  response = requests.get(url)
-  soup = BeautifulSoup(response.text, 'lxml')
-  movies = soup.select('div.lister-item mode-advanced')
-  results = []
-  for movie in movies:
-    title = movie.select('a.title')[0].text
-    rating = movie.select('div.ratings-bar')[0].text
-    release_date = movie.select('span.release_date')[0].text
-    if release_date is None:
-      release_date = re.search(r'\((.*?)\)', title).group(1)
-    results.append({
-      'title': title,
-      'release_date': release_date,
-      'rating': rating,
-    })
-  return results
+if not all([API_ID, API_HASH, BOT_TOKEN]):
+    raise ValueError("API_ID, API_HASH, and BOT_TOKEN environment variables must be set.")
 
-@pyrogram.Client.on_message()
-async def imdb_bot(client, message):
-  query = message.text
-  results = get_imdb_top_three(query)
-  for result in results:
-    await client.send_message(
-      chat_id=message.chat.id,
-      text='Title: {}\nRelease Date: {}\nRating: {}\n'.format(
-        result['title'], result['release_date'], result['rating']))
+app = Client(
+    "imdb_bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
 
-if __name__ == '__main__':
-  bot = pyrogram.Client('my_bot', api_id=get_api_id(), api_hash=get_api_hash(), bot_token=get_bot_token())
-  bot.start()
-  bot.run()
-                        
+def start_command(update, context):
+    update.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
+
+@Client.on_message(filters.command("start"))
+def start(client, message):
+    start_command(message, None)
+
+@Client.on_message(filters.text & ~filters.command)
+def reply_to_text(client, message):
+    content = message.text
+
+    # Extract text between $ and & using regular expressions
+    match = re.search(r'\$(.*?)\&', content)
+    if match:
+        search_text = match.group(1)
+
+        # Search IMDb using 'search_text' and retrieve results
+        ia = IMDb()
+        search_results = ia.search_movie(search_text)
+
+        if search_results:
+            # Get the first three search results
+            first_three_results = search_results[:3]
+            reply_message = f"IMDb search results for '{search_text}':\n"
+            for result in first_three_results:
+                title = result['title']
+                release_date = result.get('release date', 'N/A')
+                release_year = result.get('year', 'N/A')
+
+                if release_date == 'N/A':
+                    release_info = f"Release Year: {release_year}"
+                else:
+                    release_info = f"Release Date: {release_date}"
+
+                reply_message += f"\nTitle: {title}\n{release_info}"
+
+            # Send IMDb search results to the appropriate chat
+            client.send_message(chat_id=message.chat.id, text=reply_message)
+        else:
+            # No search results found, send a message indicating no queries are related
+            client.send_message(chat_id=message.chat.id, text=f"No Queries Related {search_text}")
+
+@Client.on_message(filters.command("help"))
+def help_command(update, context):
+    update.reply_text("Send me a message containing text between $ and & to search on IMDb.")
+
+if __name__ == "__main__":
+    app.run()
