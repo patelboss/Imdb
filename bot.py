@@ -22,6 +22,7 @@ class Bot(Client):
         super().__init__(
             bot_token=BOT_TOKEN,
             workers=50,
+            name="IMDb",
             plugins={"root": "plugins"},
             sleep_threshold=5,
         )
