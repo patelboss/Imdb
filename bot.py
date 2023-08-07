@@ -10,6 +10,17 @@ from aiohttp import web
 from plugins import web_server
 
 PORT = "8080"
+
+# Set up logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Retrieve the Telegram Bot API Token from the environment variable
+TELEGRAM_BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
+        # Search IMDb using 'content' and retrieve results
+
 class Bot(Client):
 
    async def start(self):
@@ -76,15 +87,7 @@ def reply_to_content(update: Update, context: CallbackContext) -> None:
         content = update.message.text
         # Extract content between { and }
         content = content[content.find('{')+1:content.find('}')]
-# Set up logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-# Retrieve the Telegram Bot API Token from the environment variable
-TELEGRAM_BOT_TOKEN = os.getenv("BOT_TOKEN")
-if not TELEGRAM_BOT_TOKEN:
-    raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
-        # Search IMDb using 'content' and retrieve results
         ia = IMDb()
         search_results = ia.search_movie(content)
         
