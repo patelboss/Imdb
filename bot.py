@@ -22,9 +22,10 @@ if not TELEGRAM_BOT_TOKEN:
         # Search IMDb using 'content' and retrieve results
 
 async def start(self):
-    # Code for the start function
       await super().start()
-    # Global variables
+    logging.info("Bot starting. hello .")
+
+
     temp.ME = me.id
     temp.U_NAME = me.username
     temp.B_NAME = me.first_name
@@ -38,7 +39,7 @@ async def start(self):
 
 async def stop(self, args):
        await super().stop()
-    # Code for the stop function
+      logging.info("Bot stopped. Bye.")
    
   async def iter_messages(
         self,
