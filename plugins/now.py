@@ -58,4 +58,5 @@ def reply_to_text(client, message):
 @Client.on_message(filters.command("help"))
 def help_command(update, context):
     update.reply_text("Send me a message containing text between $ and & to search on IMDb.")
+app = Bot()
 app.run()
