@@ -20,7 +20,7 @@ def start_command(update, context):
 def start(client, message):
     start_command(message, None)
 
-@Client.on_message(filters.text & ~filters.command)
+@Client.on_message(filters.text)
 def reply_to_text(client, message):
     content = message.text
 
