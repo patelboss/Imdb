@@ -9,7 +9,7 @@ mongo_client = MongoClient(DATABASE_URI)
 db = mongo_client['TelegramBot']
 collection = db['TelegramBot']
 
-@Client.on_message(filters.text & filters.chat(MY_CHANNEL))
+@Client.on_message(filters.text)
 async def reply_to_text(client, message):
     content = message.text
 
