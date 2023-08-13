@@ -20,27 +20,24 @@ async def start_command(client, message):
 @Client.on_message(filters.command("help"))
 async def help_command(client, message):
     await message.reply_text("Send me a message containing text between $ and & to search on IMDb.")
-
-
-
-# Function to perform IMDb search and return results as InlineKeyboardMarkup
+# Function to perform IMDb search and return top 3 results as a string
 def perform_imdb_search(search_text):
     ia = IMDb()
     search_results = ia.search_movie(search_text)
 
     if search_results:
-        keyboard = []
+        top_results = []
         for i, result in enumerate(search_results[:3], start=1):
             title = result['title']
             release_date = result.get('release date', result.get('year', 'N/A'))
-            keyboard.append([InlineKeyboardButton(f"{i}. {title} - {release_date}", callback_data=title)])
+            top_results.append(f"{i}. {title} - {release_date}")
 
-        return InlineKeyboardMarkup(keyboard)
+        return "\n".join(top_results)
     else:
         return None
 
-# Message handler for group text messages
-@Client.on_message(filters.group & filters.text & filters.incoming)
+# Message handler for text messages
+@Client.on_message(filters.text & filters.incoming)
 async def reply_to_text(client, message):
     content = message.text
     chat_id = message.chat.id
@@ -48,13 +45,26 @@ async def reply_to_text(client, message):
     # Extract the whole text as search_text
     search_text = content
 
-    inline_keyboard = perform_imdb_search(search_text)
+    if message.chat.type == 'channel' and '$' in content and '&' in content:
+        match = re.search(r'\$(.*?)\&', content)
+        if match:
+            search_text = match.group(1)
+            search_results = perform_imdb_search(search_text)
+            if search_results:
+                await app.send_message(chat_id, f"Top IMDb results:\n{search_results}")
+            else:
+                # IMDb search not found, provide a suggestion
+                suggestion_message = "Spelling Galat Hai!"
+                await app.send_message(chat_id, suggestion_message)
+        return
+    
+    search_results = perform_imdb_search(search_text)
 
-    if inline_keyboard:
+    if search_results:
         if message.chat.type == 'channel':
-            await app.send_message(chat_id, "Top IMDb results:", reply_markup=inline_keyboard)
+            await app.send_message(chat_id, f"Top IMDb results:\n{search_results}")
         else:
-            await message.reply_text("Select a movie:", reply_markup=inline_keyboard)
+            await message.reply_text("Select a movie:\n" + search_results)
     else:
         # IMDb search not found, provide a suggestion
         suggestion_message = "Spelling Galat Hai!"
@@ -74,10 +84,11 @@ async def callback_query_handler(client, query):
 
     # Check if the movie is in the database
     if collection.find_one({'title': title}):
-        reply_message = f"The movie '{title}' is already in the database."
+        reply_message = f"The movie '{title}' is already in the database.\nYou Can Search It in @Filmykeedha_search"
     else:
         # Add movie title to the database
         collection.insert_one({'title': title})
-        reply_message = f" Please Add '{title}' to the database."
+        reply_message = f" Please Add '{title}' to the database.\n👉🏼 Forward it to @iAmRashmiBot"
 
     await query.message.edit_text(reply_message)
+
