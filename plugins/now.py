@@ -2,6 +2,7 @@ from pyrogram import Client, filters
 import re
 from imdb import IMDb
 from pymongo import MongoClient
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from config import API_ID, API_HASH, DATABASE_URI, BOT_TOKEN
 import logging
 import os
@@ -20,7 +21,22 @@ async def start_command(client, message):
 async def help_command(client, message):
     await message.reply_text("Send me a message containing text between $ and & to search on IMDb.")
 
-# Message handler to reply with IMDb information and database check
+# Function to perform IMDb search and return results as InlineKeyboardMarkup
+def perform_imdb_search(search_text):
+    ia = IMDb()
+    search_results = ia.search_movie(search_text)
+
+    if search_results:
+        keyboard = []
+        for i, result in enumerate(search_results[:10], start=1):
+            title = result['title']
+            keyboard.append([InlineKeyboardButton(f"{i}. {title}", callback_data=title)])
+
+        return InlineKeyboardMarkup(keyboard)
+    else:
+        return None
+
+# Message handler for regular text messages
 @Client.on_message(filters.text)
 async def reply_to_text(client, message):
     content = message.text
@@ -29,28 +45,31 @@ async def reply_to_text(client, message):
     match = re.search(r'\$(.*?)\&', content)
     if match:
         search_text = match.group(1)
-        ia = IMDb()
-        mongo_client = MongoClient(DATABASE_URI)
-        db = mongo_client['TelegramBot']
-        collection = db['TelegramBot']
+        inline_keyboard = perform_imdb_search(search_text)
 
-        # Search IMDb using 'search_text' and retrieve results
-        search_results = ia.search_movie(search_text)
-
-        if search_results:
-            movie_title = search_results[0]['title']
-
-            # Check if the movie is in the database
-            if collection.find_one({'title': movie_title}):
-                reply_message = f"The movie '{movie_title}' is already in the database."
-            else:
-                # Add movie title to the database
-                collection.insert_one({'title': movie_title})
-                reply_message = f"Added '{movie_title}' to the database."
-
-            # Send the reply
-            await client.send_message(message.chat.id, reply_message)
+        if inline_keyboard:
+            await message.reply_text("Select a movie:", reply_markup=inline_keyboard)
         else:
             # IMDb search not found, provide a suggestion
             suggestion_message = "Spelling Galat Hai!"
-            await client.send_message(message.chat.id, suggestion_message)
+            await message.reply_text(suggestion_message)
+
+# Callback handler for inline keyboard buttons
+@Client.on_callback_query()
+async def callback_query_handler(client, query):
+    title = query.data
+    ia = IMDb()
+    mongo_client = MongoClient(DATABASE_URI)
+    db = mongo_client['TelegramBot']
+    collection = db['TelegramBot']
+
+    # Check if the movie is in the database
+    if collection.find_one({'title': title}):
+        reply_message = f"The movie '{title}' is already in the database."
+    else:
+        # Add movie title to the database
+        collection.insert_one({'title': title})
+        reply_message = f"Added '{title}' to the database."
+
+    await query.message.edit_text(reply_message)
+
