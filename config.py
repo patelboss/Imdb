@@ -12,8 +12,8 @@ FORCE_SUB = os.environ.get("FORCE_SUB", "")
 
 ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '').split()]
 
-DATABASE_URI = environ.get('DATABASE_URI', "")
+DATABASE_URI = os.environ.get("DATABASE_URI", "")
 
-MY_CHANNEL = environ.get('MY_CHANNEL', "")
+MY_CHANNEL = os.environ.get("MY_CHANNEL", "")
 
 PORT = os.environ.get("PORT", "8080")
