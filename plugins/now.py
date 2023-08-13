@@ -6,10 +6,7 @@ from pymongo import MongoClient
 from config import API_ID, API_HASH, DATABASE_URI, MY_CHANNEL, BOT_TOKEN
 import logging
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-ia = IMDb()
-mongo_client = MongoClient(DATABASE_URI)
-db = mongo_client['TelegramBot']
-collection = db['TelegramBot']
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO,
@@ -26,13 +23,17 @@ def start(client, message):
     start_command(message, None)
 
 @Client.on_message(filters.text)
-async def reply_to_text(client, message):
+def reply_to_text(client, message):
     content = message.text
 
-    # If the message is in a channel and contains text between $ and &
-    if message.chat.type == "channel" and re.search(r'\$(.*?)\&', content):
-        match = re.search(r'\$(.*?)\&', content)
+    # Extract text between $ and & using regular expressions
+    match = re.search(r'\$(.*?)\&', content)
+    if match:
         search_text = match.group(1)
+     ia = IMDb()
+     mongo_client = MongoClient(DATABASE_URI)
+     db = mongo_client['TelegramBot']
+     collection = db['TelegramBot']
 
         # Search IMDb using 'search_text' and retrieve results
         search_results = ia.search_movie(search_text)
