@@ -2,10 +2,10 @@ from pyrogram import Client, filters
 import re
 from imdb import IMDb
 from pymongo import MongoClient
-from config import API_ID, API_HASH, MONGODB_URI, MY_CHANNEL
+from config import API_ID, API_HASH, DATABASE_URI, MY_CHANNEL
 import logging
 ia = IMDb()
-mongo_client = MongoClient(MONGODB_URI)
+mongo_client = MongoClient(DATABASE_URI)
 db = mongo_client['TelegramBot']
 collection = db['TelegramBot']
 
