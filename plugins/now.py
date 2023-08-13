@@ -21,6 +21,8 @@ async def start_command(client, message):
 async def help_command(client, message):
     await message.reply_text("Send me a message containing text between $ and & to search on IMDb.")
 
+
+
 # Function to perform IMDb search and return results as InlineKeyboardMarkup
 def perform_imdb_search(search_text):
     ia = IMDb()
@@ -28,30 +30,37 @@ def perform_imdb_search(search_text):
 
     if search_results:
         keyboard = []
-        for i, result in enumerate(search_results[:10], start=1):
+        for i, result in enumerate(search_results[:3], start=1):
             title = result['title']
-            keyboard.append([InlineKeyboardButton(f"{i}. {title}", callback_data=title)])
+            release_date = result.get('release date', result.get('year', 'N/A'))
+            keyboard.append([InlineKeyboardButton(f"{i}. {title} - {release_date}", callback_data=title)])
 
         return InlineKeyboardMarkup(keyboard)
     else:
         return None
 
-# Message handler for regular text messages
-@Client.on_message(filters.text)
+# Message handler for group text messages
+@Client.on_message(filters.group & filters.text & filters.incoming)
 async def reply_to_text(client, message):
     content = message.text
+    chat_id = message.chat.id
 
-    # Extract text between $ and & using regular expressions
-    match = re.search(r'\$(.*?)\&', content)
-    if match:
-        search_text = match.group(1)
-        inline_keyboard = perform_imdb_search(search_text)
+    # Extract the whole text as search_text
+    search_text = content
 
-        if inline_keyboard:
-            await message.reply_text("Select a movie:", reply_markup=inline_keyboard)
+    inline_keyboard = perform_imdb_search(search_text)
+
+    if inline_keyboard:
+        if message.chat.type == 'channel':
+            await app.send_message(chat_id, "Top IMDb results:", reply_markup=inline_keyboard)
         else:
-            # IMDb search not found, provide a suggestion
-            suggestion_message = "Spelling Galat Hai!"
+            await message.reply_text("Select a movie:", reply_markup=inline_keyboard)
+    else:
+        # IMDb search not found, provide a suggestion
+        suggestion_message = "Spelling Galat Hai!"
+        if message.chat.type == 'channel':
+            await app.send_message(chat_id, suggestion_message)
+        else:
             await message.reply_text(suggestion_message)
 
 # Callback handler for inline keyboard buttons
@@ -69,7 +78,6 @@ async def callback_query_handler(client, query):
     else:
         # Add movie title to the database
         collection.insert_one({'title': title})
-        reply_message = f"Added '{title}' to the database."
+        reply_message = f" Please Add '{title}' to the database."
 
     await query.message.edit_text(reply_message)
-
