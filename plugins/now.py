@@ -20,7 +20,7 @@ async def start_command(client, message):
 async def help_command(client, message):
     await message.reply_text("Send me a message containing text between $ and & to search on IMDb.")
 
-# Message handler to reply with IMDb information
+# Message handler to reply with IMDb information and database check
 @Client.on_message(filters.text)
 async def reply_to_text(client, message):
     content = message.text
@@ -38,23 +38,19 @@ async def reply_to_text(client, message):
         search_results = ia.search_movie(search_text)
 
         if search_results:
-            imdb_movie = search_results[0]
-            title = imdb_movie['title']
-            release_date = imdb_movie.get('release date', 'N/A')
-            release_year = imdb_movie.get('year', 'N/A')
-            rating = imdb_movie.get('rating', 'N/A')
+            movie_title = search_results[0]['title']
 
-            if release_date == 'N/A':
-                release_info = f"Release Year: {release_year}"
+            # Check if the movie is in the database
+            if collection.find_one({'title': movie_title}):
+                reply_message = f"The movie '{movie_title}' is already in the database."
             else:
-                release_info = f"Release Date: {release_date}"
-
-            rating_stars = '⭐' * int(rating) if rating != 'N/A' else 'N/A'
-            reply_message = f"Title: {title}\n{release_info}\nRating: {rating_stars}"
+                # Add movie title to the database
+                collection.insert_one({'title': movie_title})
+                reply_message = f"Added '{movie_title}' to the database."
 
             # Send the reply
             await client.send_message(message.chat.id, reply_message)
         else:
-            # No search results found, provide a suggestion
-            suggestion_message = "Spelling mistake! Search correct name on Google then request here."
+            # IMDb search not found, provide a suggestion
+            suggestion_message = "Spelling Galat Hai!"
             await client.send_message(message.chat.id, suggestion_message)
