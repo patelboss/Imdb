@@ -1,18 +1,15 @@
-import logging
-import os
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import Client, filters
 import re
 from imdb import IMDb
 from pymongo import MongoClient
-from config import API_ID, API_HASH, MONGODB_URI, AUTH_CHANNEL
-
+from config import API_ID, API_HASH, MONGODB_URI, MY_CHANNEL
+import logging
 ia = IMDb()
 mongo_client = MongoClient(MONGODB_URI)
-db = mongo_client['my_database']
-collection = db['movie_collection']
+db = mongo_client['TelegramBot']
+collection = db['TelegramBot']
 
-@Client.on_message(filters.text & filters.chat(AUTH_CHANNEL) & filters.user('user1', 'user2'))
+@Client.on_message(filters.text & filters.chat(MY_CHANNEL) & filters.user('user1', 'user2'))
 async def reply_to_text(client, message):
     content = message.text
 
@@ -52,4 +49,4 @@ async def reply_to_text(client, message):
             # No search results found, provide a suggestion
             suggestion_message = "Spelling mistake! Search correct name on Google then request here."
             await client.send_message(message.chat.id, suggestion_message)
-
+        
