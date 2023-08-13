@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 import re
 from imdb import IMDb
 from pymongo import MongoClient
-from config import API_ID, API_HASH, DATABASE_URI,BOT_TOKEN
+from config import API_ID, API_HASH, DATABASE_URI, BOT_TOKEN
 import logging
 import os
 
