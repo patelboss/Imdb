@@ -1,4 +1,5 @@
-# Use an official Python runtime as a parent image
+
+# Use official Python an runtime as a parent image
 FROM python:3.8-slim
 
 # Set the working directory to /app
@@ -8,8 +9,11 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip  # Upgrade pip to the latest version
+# Fixing the typo in requirements.txt
+RUN sed -i 's/string-sessions/string-session/' requirements.txt
+RUN pip install -r requirements.txt  # Install the required packages
+
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
