@@ -11,7 +11,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 import logging  # Import the logging module
 from config import *
-
+from pyrogram.errors import FloodWait
 
 # Set up logging
 logging.basicConfig(
@@ -80,8 +80,7 @@ async def run(bot, message):
     )
 
     files_count = 0
- @Client.on_callback_query(filter.media)
-    async for message in bot.get_history(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, reverse=True, filter=FILTER):
+    async for message in bot.USER.search_messages(chat_id=FROM,offset=Config.SKIP_NO,limit=Config.LIMIT,filter=FILTER):
         try:
             if message.video:
                 file_name = message.video.file_name
@@ -92,9 +91,10 @@ async def run(bot, message):
             else:
                 file_name = None
             logging.info(f"Forwarding message with file: {file_name}")
-            await bot.copy_message(
+           await bot.copy_message(
                 chat_id=TO,
                 from_chat_id=FROM,
+                parse_mode="md",
                 caption=Translation.CAPTION.format(file_name),
                 message_id=message.message_id
             )
