@@ -5,6 +5,7 @@
 import os
 import sys
 import asyncio
+from translation import Translation
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 import logging  # Import the logging module
