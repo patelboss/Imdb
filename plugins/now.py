@@ -1,60 +1,143 @@
-import logging
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# (c) Dark Angel
+
 import os
-import re
+import sys
+import asyncio
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from imdb import IMDb
-from config import API_ID, API_HASH, BOT_TOKEN
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
-# Set up logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+PORT = 8080
+BOT_TOKEN = "1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo"
+API_ID = 4063950
+API_HASH = "5ebe4b5c0a2af776bf5d2e52d7f5aaa4"
+TO_CHANNEL = -1001934993097
+FROM_CHANNEL = -1001793518796
+FILTER_TYPE = ""
+SESSION = "BQB8dx1OXpd00BJj6dZ8DK8H_goF9KshcngCUUYgNZOg8FJk3Dvg1r1IkfSDbGSHZsPXADHOqWNS31QvikslnWpTECzyYNuOq6xVObKX6fQXfHem_LGxltmNYmI4UVXoURFWS7fAwiURpAfbb4SMrbd6SmHNKEeR43s3oZH2i86Ajxodnv7xScKLJIbfB2-8brt-VP_xymLpBqNhCmajSsj7F0wYWfdxFklgr0RKetn_coMtc3n14tCCcsnUSDLl9Z3UlbfWAbpY7-abU_Na6t_M2W0PMDbMw633MZhhTZjWsMQhCO5Z6QT5Qi5eju-jZiJa2tA227dKlWqPd0KKm5mPRa98zgA"
+OWNER_ID = ["1169128654"]
+SKIP_NO = 0                   # Replace with your skip count
+LIMIT = 9999999                    # Replace with your limit
 
-# Log when the bot starts
-logging.info("Bot started. Listening for commands and messages...")
+@Client.on_message(filters.private & filters.command(['start']))
+async def start(client, message):
+    buttons = [
+        [InlineKeyboardButton('📜𝐒𝐮𝐩𝐩𝐨𝐫𝐭', url='https://t.me/Filmykeedha'),
+         InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥♻️', url='https://t.me/Filmykeedha')],
+        [InlineKeyboardButton('💡𝐒𝐨𝐮𝐜𝐞𝐂𝐨𝐝𝐞💡', url='https://github.com/patelboss/File-Auto-Forword-Bot')]
+    ]
+    reply_markup = InlineKeyboardMarkup(buttons)
+    await client.send_message(
+        chat_id=message.chat.id,
+        reply_markup=reply_markup,
+        text=Translation.START_TXT.format(message.from_user.first_name),
+        parse_mode="html"
+    )
 
-def start_command(update, context):
-    update.reply_text("Hello! I'm your IMDb bot. Send me {text} to search on IMDb.")
+@Client.on_message(filters.private & filters.command(['help']))
+async def help(client, message):
+    buttons = [[InlineKeyboardButton('𝐜𝐥𝐨𝐬𝐞 🔐', callback_data='close_btn')]]
+    reply_markup = InlineKeyboardMarkup(buttons)
+    await client.send_message(
+        chat_id=message.chat.id,
+        reply_markup=reply_markup,
+        text=Translation.HELP_TXT,
+        parse_mode="html"
+    )
 
-@Client.on_message(filters.command("start"))
-def start(client, message):
-    start_command(message, None)
+@Client.on_message(filters.private & filters.command(['about']))
+async def about(client, message):
+    buttons = [
+        [InlineKeyboardButton('💡𝐒𝐨𝐮𝐜𝐞𝐂𝐨𝐝𝐞', url='https://github.com/patelboss/File-Auto-Forword-Bot'),
+         InlineKeyboardButton('𝐜𝐥𝐨𝐬𝐞🔐', callback_data='close_btn')]
+    ]
+    reply_markup = InlineKeyboardMarkup(buttons)
+    await client.send_message(
+        chat_id=message.chat.id,
+        reply_markup=reply_markup,
+        text=Translation.ABOUT_TXT,
+        disable_web_page_preview=True,
+        parse_mode="html"
+    )
 
-@Client.on_message(filters.text)
-def reply_to_text(client, message):
-    content = message.text
+@Client.on_message(filters.private & filters.command(["run"]))
+async def run(bot, message):
+    if str(message.from_user.id) not in Config.OWNER_ID:
+        return
 
-    # Extract text between $ and & using regular expressions
-    match = re.search(r'\$(.*?)\&', content)
-    if match:
-        search_text = match.group(1)
+    buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
+    reply_markup = InlineKeyboardMarkup(buttons)
 
-        # Search IMDb using 'search_text' and retrieve results
-        ia = IMDb()
-        search_results = ia.search_movie(search_text)
+    m = await bot.send_message(
+        text="<i>File Forwarding Started😉 Join @filmykeedha</i>",
+        reply_markup=reply_markup,
+        chat_id=message.chat.id
+    )
 
-        if search_results:
-            # Get the first three search results
-            first_three_results = search_results[:3]
-            reply_message = f"IMDb search results for '{search_text}':\n"
-            for result in first_three_results:
-                title = result['title']
-                release_date = result.get('release date', 'N/A')
-                release_year = result.get('year', 'N/A')
+    files_count = 0
 
-                if release_date == 'N/A':
-                    release_info = f"Release Year: {release_year}"
-                else:
-                    release_info = f"Release Date: {release_date}"
+    async for message in bot.USER.search_messages(chat_id=FROM, offset=Config.SKIP_NO, limit=Config.LIMIT, filter=FILTER):
+        try:
+            if message.video:
+                file_name = message.video.file_name
+            elif message.document:
+                file_name = message.document.file_name
+            elif message.audio:
+                file_name = message.audio.file_name
+            else:
+                file_name = None
 
-                reply_message += f"\nTitle: {title}\n{release_info}"
+            await bot.copy_message(
+                chat_id=TO,
+                from_chat_id=FROM,
+                parse_mode="md",
+                caption=Translation.CAPTION.format(file_name),
+                message_id=message.message_id
+            )
 
-            # Send IMDb search results to the appropriate chat
-            client.send_message(chat_id=message.chat.id, text=reply_message)
-        else:
-            # No search results found, send a message indicating no queries are related
-            client.send_message(chat_id=message.chat.id, text=f"No Queries Related {search_text}")
+            files_count += 1
+            await asyncio.sleep(1)
 
-@Client.on_message(filters.command("help"))
-def help_command(update, context):
-    update.reply_text("Send me a message containing text between $ and & to search on IMDb.")
+        except FloodWait as e:
+            await asyncio.sleep(e.x)
+        except Exception as e:
+            print(e)
+            pass
+
+    buttons = [[InlineKeyboardButton('📜 𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥', url='https://t.me/Filmykeedha')]]
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    await m.edit(
+        text=f"<u><i>Successfully Forwarded</i></u>\n\n<b>Total Forwarded Files:-</b> <code>{files_count}</code> <b>Files</b>\n<b>Thanks For Using Me❤️</b>",
+        reply_markup=reply_markup
+    )
+
+@Client.on_callback_query(filters.regex(r'^stop_btn$'))
+async def stop_button(c: Client, cb: CallbackQuery):
+    await cb.message.delete()
+    await cb.answer()
+
+    msg = await c.send_message(
+        text="<i>Trying To Stop..... @filmykeedha</i>",
+        chat_id=cb.message.chat.id
+    )
+
+    await asyncio.sleep(5)
+
+    await msg.edit("<i>File Forwarding Stopped Successfully 👍 @filmykeedha</i>")
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+@Client.on_callback_query(filters.regex(r'^close_btn$'))
+async def close(bot, update):
+    await update.answer()
+    await update.message.delete()
+
+app = Client(
+    ":memory:",
+    bot_token=Config.BOT_TOKEN,
+    api_id=Config.API_ID,
+    api_hash=Config.API_HASH
+)
+
+app.run()
