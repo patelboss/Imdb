@@ -29,13 +29,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-
-
 @Client.on_message(filters.private & filters.command(['start']))
 async def start(client, message):
     logger.info("Received start command")
-     buttons = [
+    buttons = [
         [InlineKeyboardButton('📜𝐒𝐮𝐩𝐩𝐨𝐫𝐭', url='https://t.me/Filmykeedha'),
          InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥♻️', url='https://t.me/Filmykeedha')],
         [InlineKeyboardButton('💡𝐒𝐨𝐮𝐜𝐞𝐂𝐨𝐝𝐞💡', url='https://github.com/patelboss/File-Auto-Forword-Bot')]
@@ -47,6 +44,8 @@ async def start(client, message):
         text=Translation.START_TXT.format(message.from_user.first_name),
         parse_mode="html"
     )
+
+
 
 @Client.on_message(filters.private & filters.command(['help']))
 async def help(client, message):
