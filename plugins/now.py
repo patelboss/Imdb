@@ -65,6 +65,7 @@ async def about(client, message):
 async def run(bot, message):
     logging.info("Received /run command")
     if str(message.from_user.id) not in OWNER_ID:
+        await message.reply("You are not authorized to use this command.")
         return
 
     buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
