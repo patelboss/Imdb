@@ -104,3 +104,34 @@ def forward_old_message(client, message):
         except Exception as e:
             message.reply_text(f"Error: {e}")
     
+@Client.on_message(filters.private & filters.command("forward_all_media") & filters.user(OWNER_ID))
+def start_forward_all_media(client, message):
+    global forwarding, total_media_to_forward
+    forwarding = True
+    total_media_to_forward = 0
+    message.reply_text("Forwarding all media started!")
+
+@Client.on_message(filters.media & filters.chat(FROM))
+def forward_media(client, message):
+    global forwarding, forwarded_count, total_media_to_forward
+
+    if forwarding:
+        try:
+            client.forward_messages(chat_id=TO, from_chat_id=FROM, message_ids=message.message_id)
+            forwarded_count += 1
+            total_media_to_forward -= 1
+            if total_media_to_forward == 0:
+                forwarding = False
+                app.send_message(OWNER_ID, "All media have been successfully forwarded!")
+            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Stop Forwarding", callback_data="stop")]])
+            message.reply_text(f"Media forwarded! Forwarded count: {forwarded_count}", reply_markup=reply_markup)
+        except Exception as e:
+            message.reply_text(f"Error: {e}")
+
+# ...
+
+@Client.on_callback_query(filters.regex("stop"))
+def stop_forwarding(client, callback_query):
+    global forwarding
+    forwarding = False
+    callback_query.answer("Forwarding stopped.")
