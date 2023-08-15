@@ -9,18 +9,7 @@ from translation import Translation
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 import logging  # Import the logging module
-PORT = 8080
-BOT_TOKEN = "1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo"
-API_ID = 4063950
-API_HASH = "5ebe4b5c0a2af776bf5d2e52d7f5aaa4"
-TO_CHANNEL = -1001934993097
-FROM_CHANNEL = -1001793518796
-FILTER_TYPE = ""
-SESSION = "BQB8dx1OXpd00BJj6dZ8DK8H_goF9KshcngCUUYgNZOg8FJk3Dvg1r1IkfSDbGSHZsPXADHOqWNS31QvikslnWpTECzyYNuOq6xVObKX6fQXfHem_LGxltmNYmI4UVXoURFWS7fAwiURpAfbb4SMrbd6SmHNKEeR43s3oZH2i86Ajxodnv7xScKLJIbfB2-8brt-VP_xymLpBqNhCmajSsj7F0wYWfdxFklgr0RKetn_coMtc3n14tCCcsnUSDLl9Z3UlbfWAbpY7-abU_Na6t_M2W0PMDbMw633MZhhTZjWsMQhCO5Z6QT5Qi5eju-jZiJa2tA227dKlWqPd0KKm5mPRa98zgA"
-OWNER_ID = ["1169128654"]
-SKIP_NO = 0                   # Replace with your skip count
-LIMIT = 9999999                    # Replace with your limit
-
+from config import *
 
 
 # Set up logging
