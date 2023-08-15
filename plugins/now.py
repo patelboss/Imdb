@@ -74,26 +74,30 @@ async def run(bot, message):
 
     # Check if bot is a member of FROM_CHANNEL
     try:
-        from_channel = await bot.get_chat(FROM)
-        if not from_channel.is_member:
-            await message.reply("Bot is not a member of the source channel.")
-            return
-    except Exception as e:
-        logging.error(f"Error checking FROM_CHANNEL: {e}")
-        await message.reply("Error checking source channel. Please try again.")
+    to_channel = await bot.get_chat(TO)  # Use the destination channel ID stored in TO
+    if not to_channel.is_member:
+        logging.warning("Bot is not a member of the destination channel.")
+        await message.reply("Bot is not a member of the destination channel.")
         return
+except Exception as e:
+    logging.error(f"Error checking TO_CHANNEL: {e}")
+    await message.reply("Error checking destination channel. Please try again.")
+    return
 
-    # Check if bot is a member of TO_CHANNEL
-    try:
-        to_channel = await bot.get_chat(TO)
-        if not to_channel.is_member:
-            await message.reply("Bot is not a member of the destination channel.")
-            return
-    except Exception as e:
-        logging.error(f"Error checking TO_CHANNEL: {e}")
-        await message.reply("Error checking destination channel. Please try again.")
-        return
+# Check if source channel exists
+try:
+    from_channel = await bot.get_chat(FROM)  # Use the source channel username stored in FROM
+except Exception as e:
+    logging.error(f"Error checking source channel: {e}")
+    await message.reply("Error checking source channel. Please try again.")
+    return
 
+if not from_channel:
+    logging.warning("Source channel not found.")
+    await message.reply("Source channel not found. Please check the channel username.")
+    return
+
+    
     buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
     reply_markup = InlineKeyboardMarkup(buttons)
 
