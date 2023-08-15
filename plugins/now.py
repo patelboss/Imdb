@@ -66,7 +66,7 @@ async def about(client, message):
 
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
-    if str(message.from_user.id) not in Config.OWNER_ID:
+    if str(message.from_user.id) not in OWNER_ID:
         return
 
     buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
@@ -80,7 +80,7 @@ async def run(bot, message):
 
     files_count = 0
 
-    async for message in bot.USER.search_messages(chat_id=FROM, offset=Config.SKIP_NO, limit=Config.LIMIT, filter=FILTER):
+    async for message in bot.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
         try:
             if message.video:
                 file_name = message.video.file_name
