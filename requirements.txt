@@ -20,4 +20,3 @@ requests
 bs4
 pynewtonmath
 python-dotenv==0.19.0
-string-session==2.2.0
