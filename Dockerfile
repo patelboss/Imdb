@@ -10,8 +10,8 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
+# Create a symbolic link named "session" that points to the long string session
+RUN ln -s /path/to/long/string/session session
 
-# Run bot.py when the container launches
-CMD ["python", "bot.py"]
+# Run the Telegram client with the short name of the symbolic link
+CMD python bot.py
