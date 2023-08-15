@@ -3,6 +3,7 @@
 # (c) Dark Angel
 
 import os
+import re
 import sys
 import asyncio
 from translation import Translation
