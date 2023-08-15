@@ -12,6 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a symbolic link named "session" that points to the long string session
 RUN ln -s /path/to/long/string/session session
-
+EXPOSE 8080
 # Run the Telegram client with the short name of the symbolic link
 CMD python bot.py
