@@ -80,7 +80,7 @@ async def run(bot, message):
     )
 
     files_count = 0
-
+ @Client.on_callback_query(filter.media)
     async for message in bot.get_history(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, reverse=True, filter=FILTER):
         try:
             if message.video:
