@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # (c) Dark Angel
 
-from config import Config
+from config import *
 from config import LOGGER
 from pyrogram import Client, __version__
 
@@ -10,9 +10,9 @@ from pyrogram import Client, __version__
 class User(Client):
     def __init__(self):
         super().__init__(
-            Config.SESSION,
-            api_hash=Config.API_HASH,
-            api_id=Config.API_ID,
+               SESSION,
+            api_hash=API_HASH,
+            api_id=API_ID,
             workers=4
         )
         self.LOGGER = LOGGER
@@ -24,4 +24,4 @@ class User(Client):
 
     async def stop(self, *args):
         await super().stop()
-        self.LOGGER(__name__).info("Bot stopped. Bye.")
+        self.LOGGER(__name__).info("Bot stopped. Bye.SESSION")
