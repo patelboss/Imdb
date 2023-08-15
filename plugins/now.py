@@ -7,7 +7,7 @@ import re
 import sys
 import asyncio
 from plugins.translation import Translation
-from pyrogram import Client, filters
+from pyrogram import Client, filters, __version__
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 import logging  # Import the logging module
 from config import *
