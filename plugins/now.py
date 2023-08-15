@@ -65,14 +65,38 @@ async def about(client, message):
 
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
-    logging.info("Received /run command")
+    """Run the file forwarding process."""
 
     # Check if user is in OWNER_ID list
     if str(message.from_user.id) not in OWNER_ID:
         await message.reply("You are not authorized to use this command.")
         return
 
-    
+    # Check if bot is a member of TO_CHANNEL
+    try:
+        to_channel = await bot.get_chat(TO_CHANNEL)
+        if not to_channel.is_member:
+            logging.warning("Bot is not a member of the destination channel.")
+            await message.reply("Bot is not a member of the destination channel.")
+            return
+    except Exception as e:
+        logging.error(f"Error checking TO_CHANNEL: {e}")
+        await message.reply("Error checking destination channel. Please try again.")
+        return
+
+    # Check if source channel exists
+    try:
+        from_channel = await bot.get_chat(FROM_CHANNEL)  # Use the source channel username stored 
+    except Exception as e:
+        logging.error(f"Error checking source channel: {e}")
+        await message.reply("Error checking source channel. Please try again.")
+        return
+
+    if not from_channel:
+        logging.warning("Source channel not found.")
+        await message.reply("Source channel not found. Please check the channel username.")
+        return
+
     buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
     reply_markup = InlineKeyboardMarkup(buttons)
 
@@ -81,10 +105,9 @@ async def run(bot, message):
         reply_markup=reply_markup,
         chat_id=message.chat.id
     )
-    
 
     files_count = 0
-    async for message in bot.USER.search_messages(chat_id=FROM_CHANNEL, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
+    async for message in bot.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
       if message.video or message.document or message.audio:
         try:
             if message.video:
@@ -97,8 +120,8 @@ async def run(bot, message):
                 file_name = None
             logging.info(f"Forwarding message with file: {file_name}")
             await bot.copy_message(
-                chat_id=TO_CHANNEL,
-                from_chat_id=FROM_CHANNEL,
+                chat_id=TO,
+                from_chat_id=FROM,
                 parse_mode="md",
                 caption=Translation.CAPTION.format(file_name),
                 message_id=message.message_id
@@ -113,9 +136,6 @@ async def run(bot, message):
             logging.error(f"An error occurred: {e}")
             print(e)
             pass
-
-    buttons = [[InlineKeyboardButton('📜 𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥', url='https://t.me/Filmykeedha')]]
-    reply_markup = InlineKeyboardMarkup(buttons)
 
     await m.edit(
         text=f"<u><i>Successfully Forwarded</i></u>\n\n<b>Total Forwarded Files:-</b> <code>{files_count}</code> <b>Files</b>\n<b>Thanks For Using Me❤️</b>",
