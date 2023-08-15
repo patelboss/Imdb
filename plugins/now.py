@@ -72,31 +72,6 @@ async def run(bot, message):
         await message.reply("You are not authorized to use this command.")
         return
 
-    # Check if bot is a member of 
-    try:
-    to_channel = await bot.get_chat(TO_CHANNEL)
-    if not to_channel.is_member:
-        logging.warning("Bot is not a member of the destination channel.")
-        await message.reply("Bot is not a member of the destination channel.")
-        return
-except Exception as e:
-    logging.error(f"Error checking TO_CHANNEL: {e}")
-    await message.reply("Error checking destination channel. Please try again.")
-    return
-
-# Check if source channel exists
-try:
-    from_channel = await bot.get_chat(FROM_CHANNEL)  # Use the source channel username stored 
-except Exception as e:
-    logging.error(f"Error checking source channel: {e}")
-    await message.reply("Error checking source channel. Please try again.")
-    return
-
-if not from_channel:
-    logging.warning("Source channel not found.")
-    await message.reply("Source channel not found. Please check the channel username.")
-    return
-
     
     buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
     reply_markup = InlineKeyboardMarkup(buttons)
