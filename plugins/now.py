@@ -135,5 +135,3 @@ async def stop_button(c: Client, cb: CallbackQuery):
 async def close(bot, update):
     await update.answer()
     await update.message.delete()
-async def main():
-    await bot.start
