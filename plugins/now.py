@@ -64,6 +64,8 @@ async def about(client, message):
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
     logging.info("Received /run command")
+    
+    # Check if user is in OWNER_ID list
     if str(message.from_user.id) not in OWNER_ID:
         await message.reply("You are not authorized to use this command.")
         return
@@ -79,7 +81,7 @@ async def run(bot, message):
 
     files_count = 0
 
-    async for message in bot.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
+    async for message in bot.get_history(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, reverse=True):
         try:
             if message.video:
                 file_name = message.video.file_name
