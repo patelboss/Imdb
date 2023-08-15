@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# (c) Dark Angel
+
 import os
 import re
 import sys
@@ -19,8 +23,6 @@ logger = logging.getLogger(__name__)
 @Client.on_message(filters.private & filters.command(['start']))
 async def start(client, message):
     logger.info("Received /start command")
-    logger.debug("User ID: %s", message.from_user.id)
-    logger.debug("First name: %s", message.from_user.first_name)
     buttons = [
         [InlineKeyboardButton('📜𝐒𝐮𝐩𝐩𝐨𝐫𝐭', url='https://t.me/Filmykeedha'),
          InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥♻️', url='https://t.me/Filmykeedha')],
@@ -37,7 +39,7 @@ async def start(client, message):
 
 @Client.on_message(filters.private & filters.command(['help']))
 async def help(client, message):
-    logger.info("Received /help command")
+    logging.info("Received /help command")
     buttons = [[InlineKeyboardButton('𝐜𝐥𝐨𝐬𝐞 🔐', callback_data='close_btn')]]
     reply_markup = InlineKeyboardMarkup(buttons)
     await client.send_message(
@@ -48,7 +50,7 @@ async def help(client, message):
 
 @Client.on_message(filters.private & filters.command(['about']))
 async def about(client, message):
-    logger.info("Received /about command")
+    logging.info("Received /about command")
     buttons = [
         [InlineKeyboardButton('💡𝐒𝐨𝐮𝐜𝐞𝐂𝐨𝐝𝐞', url='https://github.com/patelboss/File-Auto-Forword-Bot'),
          InlineKeyboardButton('𝐜𝐥𝐨𝐬𝐞🔐', callback_data='close_btn')]
@@ -63,9 +65,8 @@ async def about(client, message):
 
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
-    logger.info("Received /run command")
-    logger.debug("User ID: %s", message.from_user.id)
-    logger.debug("First name: %s", message.from_user.first_name)
+    logging.info("Received /run command")
+    
     # Check if user is in OWNER_ID list
     if str(message.from_user.id) not in OWNER_ID:
         await message.reply("You are not authorized to use this command.")
@@ -81,9 +82,10 @@ async def run(bot, message):
     )
 
     files_count = 0
-    async for message in bot.USER.search_messages(chat_id=FROM,offset=Config.SKIP_NO,limit=Config.LIMIT,filter=FILTER):
-        if message.video or message.document or message.audio:
-            try:
+    async for message in bot.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
+      if message.video or message.document or message.audio:
+        try:
+            if message.video:
                 file_name = message.video.file_name
             elif message.document:
                 file_name = message.document.file_name
@@ -121,6 +123,7 @@ async def run(bot, message):
 
 @Client.on_callback_query(filters.regex(r'^stop_btn$'))
 async def stop_button(c: Client, cb: CallbackQuery):
+    logging.info("Stop Button Callback")
     await cb.message.delete()
     await cb.answer()
 
