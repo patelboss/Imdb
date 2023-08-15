@@ -1,7 +1,9 @@
 import os
 from config import *
+import re
+from plugins import now
 
-class Translation(object):
+class Translation:
   START_TXT = """<b>Hai {}!!</b>
 <i>I'm Simple Auto file Forward & IMDb Search Bot
 This Bot forward all files to One Public channel to Your Personal channel
