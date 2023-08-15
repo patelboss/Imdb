@@ -7,7 +7,7 @@ import sys
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-
+import logging  # Import the logging module
 PORT = 8080
 BOT_TOKEN = "1829969794:AAE7BRLnznbiLmWcI8qmw_GoudeGzSzZqHo"
 API_ID = 4063950
@@ -20,9 +20,22 @@ OWNER_ID = ["1169128654"]
 SKIP_NO = 0                   # Replace with your skip count
 LIMIT = 9999999                    # Replace with your limit
 
+
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
+
+
 @Client.on_message(filters.private & filters.command(['start']))
 async def start(client, message):
-    buttons = [
+    logger.info("Received start command")
+     buttons = [
         [InlineKeyboardButton('📜𝐒𝐮𝐩𝐩𝐨𝐫𝐭', url='https://t.me/Filmykeedha'),
          InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥♻️', url='https://t.me/Filmykeedha')],
         [InlineKeyboardButton('💡𝐒𝐨𝐮𝐜𝐞𝐂𝐨𝐝𝐞💡', url='https://github.com/patelboss/File-Auto-Forword-Bot')]
