@@ -61,80 +61,46 @@ async def about(client, message):
         disable_web_page_preview=True,
     )
 
-@Client.on_message(filters.private & filters.command(["run"]))
-async def run(bot, message):
-    logging.info("Received /run command")
-    
-    # Check if user is in OWNER_ID list
-    if str(message.from_user.id) not in OWNER_ID:
-        await message.reply("You are not authorized to use this command.")
-        return
 
-    buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
-    reply_markup = InlineKeyboardMarkup(buttons)
 
-    m = await bot.send_message(
-        text="<i>File Forwarding Started😉 Join @filmykeedha</i>",
-        reply_markup=reply_markup,
-        chat_id=message.chat.id
-    )
+@Client.on_message(filters.private & filters.command("start_forward"))
+def start_forward(client, message):
+    global forwarding
+    forwarding = True
+    message.reply_text("Forwarding started! Send a message to be forwarded.")
 
-    files_count = 0
+forwarding = False
+forwarded_count = 0
 
-    async for message in bot.get_history(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, reverse=True, filter=FILTER):
+@Client.on_message(filters.private & ~filters.command("start_forward") & filters.reply & filters.text)
+def forward_message(client, message):
+    global forwarding, forwarded_count
+
+    if forwarding:
         try:
-            if message.video:
-                file_name = message.video.file_name
-            elif message.document:
-                file_name = message.document.file_name
-            elif message.audio:
-                file_name = message.audio.file_name
-            else:
-                file_name = None
-            logging.info(f"Forwarding message with file: {file_name}")
-            await bot.copy_message(
-                chat_id=TO,
-                from_chat_id=FROM,
-                parse_mode="md",
-                caption=Translation.CAPTION.format(file_name),
-                message_id=message.message_id
-            )
-
-            files_count += 1
-            await asyncio.sleep(1)
-
-        except FloodWait as e:
-            await asyncio.sleep(e.x)
+            forwarded_message = client.forward_messages(chat_id=message.chat.id, from_chat_id=message.reply_to_message.forward_from_chat.id, message_ids=message.reply_to_message.message_id)
+            forwarded_count += 1
+            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Stop Forwarding", callback_data="stop")]])
+            message.reply_text(f"Message forwarded! Forwarded count: {forwarded_count}", reply_markup=reply_markup)
         except Exception as e:
-            logging.error(f"An error occurred: {e}")
-            print(e)
-            pass
+            message.reply_text(f"Error: {e}")
 
-    buttons = [[InlineKeyboardButton('📜 𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥', url='https://t.me/Filmykeedha')]]
-    reply_markup = InlineKeyboardMarkup(buttons)
+@Client.on_callback_query(filters.regex("stop"))
+def stop_forwarding(client, callback_query):
+    global forwarding
+    forwarding = False
+    callback_query.answer("Forwarding stopped.")
 
-    await m.edit(
-        text=f"<u><i>Successfully Forwarded</i></u>\n\n<b>Total Forwarded Files:-</b> <code>{files_count}</code> <b>Files</b>\n<b>Thanks For Using Me❤️</b>",
-        reply_markup=reply_markup
-    )
+@Client.on_message(filters.private & ~filters.command("start_forward") & ~filters.reply & filters.text)
+def forward_old_message(client, message):
+    global forwarding, forwarded_count
 
-
-@Client.on_callback_query(filters.regex(r'^stop_btn$'))
-async def stop_button(c: Client, cb: CallbackQuery):
-    await cb.message.delete()
-    await cb.answer()
-
-    msg = await c.send_message(
-        text="<i>Trying To Stop..... @filmykeedha</i>",
-        chat_id=cb.message.chat.id
-    )
-
-    await asyncio.sleep(5)
-
-    await msg.edit("<i>File Forwarding Stopped Successfully 👍 @filmykeedha</i>")
-    os.execl(sys.executable, sys.executable, *sys.argv)
-
-@Client.on_callback_query(filters.regex(r'^close_btn$'))
-async def close(bot, update):
-    await update.answer()
-    await update.message.delete()
+    if forwarding:
+        try:
+            forwarded_message = client.forward_messages(chat_id=message.chat.id, from_chat_id=message.chat.id, message_ids=message.message_id)
+            forwarded_count += 1
+            reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Stop Forwarding", callback_data="stop")]])
+            message.reply_text(f"Old message forwarded! Forwarded count: {forwarded_count}", reply_markup=reply_markup)
+        except Exception as e:
+            message.reply_text(f"Error: {e}")
+    
