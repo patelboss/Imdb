@@ -13,3 +13,5 @@ FORCE_SUB = os.environ.get("FORCE_SUB", "")
 ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '').split()]
 
 PORT = os.environ.get("PORT", "8080")
+
+CAPTION = os.environ.get("CAPTION", "")
