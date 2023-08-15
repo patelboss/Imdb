@@ -81,7 +81,7 @@ async def run(bot, message):
 
     files_count = 0
 
-    async for message in bot.get_history(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, reverse=True):
+    async for message in bot.get_history(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, reverse=True, filter=FILTER):
         try:
             if message.video:
                 file_name = message.video.file_name
