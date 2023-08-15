@@ -72,9 +72,9 @@ async def run(bot, message):
         await message.reply("You are not authorized to use this command.")
         return
 
-    # Check if bot is a member of FROM_CHANNEL
+    # Check if bot is a member of 
     try:
-    to_channel = await bot.get_chat(TO)  # Use the destination channel ID stored in TO
+    to_channel = await bot.get_chat(TO)
     if not to_channel.is_member:
         logging.warning("Bot is not a member of the destination channel.")
         await message.reply("Bot is not a member of the destination channel.")
@@ -86,7 +86,7 @@ except Exception as e:
 
 # Check if source channel exists
 try:
-    from_channel = await bot.get_chat(FROM)  # Use the source channel username stored in FROM
+    from_channel = await bot.get_chat(FROM)  # Use the source channel username stored 
 except Exception as e:
     logging.error(f"Error checking source channel: {e}")
     await message.reply("Error checking source channel. Please try again.")
