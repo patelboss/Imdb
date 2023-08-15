@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import asyncio
+from translation import Translation
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 import logging  # Import the logging module
@@ -23,20 +24,15 @@ logger = logging.getLogger(__name__)
 async def start(client, message):
     logger.info("Received start command")
     buttons = [
-        [InlineKeyboardButton('📜𝐒𝐮𝐩𝐩𝐨𝐫𝐭', url='https://t.me/Filmykeedha')],
-        [InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥♻️', url='https://t.me/Filmykeedha')],
+        [InlineKeyboardButton('📜𝐒𝐮𝐩𝐩𝐨𝐫𝐭', url='https://t.me/Filmykeedha'),
+         InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞 𝐂𝐡𝐚𝐧𝐧𝐞𝐥♻️', url='https://t.me/Filmykeedha')],
         [InlineKeyboardButton('💡𝐒𝐨𝐮𝐜𝐞𝐂𝐨𝐝𝐞💡', url='https://github.com/patelboss/File-Auto-Forword-Bot')]
     ]
     reply_markup = InlineKeyboardMarkup(buttons)
     await client.send_message(
         chat_id=message.chat.id,
         reply_markup=reply_markup,
-        text=(
-            "<b>Hai {}!!</b>\n"
-            "<i>I'm Simple Auto file Forward & IMDb Search Bot\n"
-            "This Bot forward all files to One Public channel to Your Personal channel\n"
-            "More details /help</i>"
-        ).format(message.from_user.first_name),
+        text=Translation.START_TXT.format(message.from_user.first_name),
         parse_mode="html"
     )
 
@@ -120,11 +116,6 @@ async def run(bot, message):
         reply_markup=reply_markup
     )
 
-@Client.on_callback_query(filters.regex(r'^close_btn$'))
-async def close(bot, update):
-    await update.answer()
-    await update.message.delete()
-
 @Client.on_callback_query(filters.regex(r'^stop_btn$'))
 async def stop_button(c: Client, cb: CallbackQuery):
     await cb.message.delete()
@@ -139,3 +130,10 @@ async def stop_button(c: Client, cb: CallbackQuery):
 
     await msg.edit("<i>File Forwarding Stopped Successfully 👍 @filmykeedha</i>")
     os.execl(sys.executable, sys.executable, *sys.argv)
+
+@Client.on_callback_query(filters.regex(r'^close_btn$'))
+async def close(bot, update):
+    await update.answer()
+    await update.message.delete()
+async def main():
+    await bot.start
