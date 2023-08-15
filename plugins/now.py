@@ -63,6 +63,7 @@ async def about(client, message):
 
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
+    logging.info("Received /run command")
     if str(message.from_user.id) not in OWNER_ID:
         return
 
@@ -87,7 +88,7 @@ async def run(bot, message):
                 file_name = message.audio.file_name
             else:
                 file_name = None
-
+            logging.info(f"Forwarding message with file: {file_name}")
             await bot.copy_message(
                 chat_id=TO,
                 from_chat_id=FROM,
@@ -102,6 +103,7 @@ async def run(bot, message):
         except FloodWait as e:
             await asyncio.sleep(e.x)
         except Exception as e:
+            logging.error(f"An error occurred: {e}")
             print(e)
             pass
 
@@ -112,6 +114,7 @@ async def run(bot, message):
         text=f"<u><i>Successfully Forwarded</i></u>\n\n<b>Total Forwarded Files:-</b> <code>{files_count}</code> <b>Files</b>\n<b>Thanks For Using Me❤️</b>",
         reply_markup=reply_markup
     )
+
 
 @Client.on_callback_query(filters.regex(r'^stop_btn$'))
 async def stop_button(c: Client, cb: CallbackQuery):
