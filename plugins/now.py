@@ -1,35 +1,55 @@
 from pyrogram import Client, filters
-from config import*
+import asyncio
+import logging
+from config import *
+
+logging.basicConfig(level=logging.INFO)
 
 
 copied_message_count = 0
+forwarding_active = False
 
-@app.on_message(filters.command("start"))
-def start(client, message):
-    global copied_message_count
-    copied_message_count = 0
-    messages = app.get_history(FROM_CHANNEL, limit=100)  # Adjust limit as needed
-    for msg in messages:
-        copy_message(client, msg)
-    client.send_message(TO_CHANNEL, f"Copied {copied_message_count} messages from old history.")
+@Client.on_message(filters.command("run") & filters.private)
+def start_forwarding(client, message):
+    global forwarding_active
+    if forwarding_active:
+        client.send_message(message.chat.id, "Forwarding is already active.")
+    else:
+        forwarding_active = True
+        asyncio.ensure_future(forward_messages(client))
 
-@app.on_message(filters.chat(FROM_CHANNEL))
-def copy_message(client, message):
-    global copied_message_count
-    copied_message_count += 1
+@Client.on_message(filters.chat(FROM_CHANNEL) & filters.text & ~filters.edited)
+async def forward_messages(client, message):
+    global copied_message_count, forwarding_active
+    if forwarding_active:
+        copied_message_count += 1
 
-    caption = None
-    if message.caption:
-        caption = message.caption
+        caption = message.caption if message.caption else None
 
-    if message.text:
-        client.send_message(TO_CHANNEL, text=message.text, caption=caption)
+        await client.send_message(TO_CHANNEL, text=message.text, reply_to_message_id=message.message_id, caption=caption)
 
-    elif message.media:
-        client.send_media(TO_CHANNEL, media=message.media, caption=caption)
-
-@app.on_message(filters.command("count"))
+@Client.on_message(filters.command("count") & filters.private)
 def show_copied_message_count(client, message):
     global copied_message_count
-    client.send_message(TO_CHANNEL, f"Copied {copied_message_count} messages so far.")
-    
+    client.send_message(message.chat.id, f"Copied {copied_message_count} messages so far.")
+
+async def forward_messages(client):
+    global forwarding_active
+    async for message in client.iter_history(FROM_CHANNEL):
+        if not forwarding_active:
+            break
+
+        if message.text:
+            caption = message.caption if message.caption else None
+            await client.send_message(TO_CHANNEL, text=message.text, caption=caption)
+
+        elif message.media:
+            caption = message.caption if message.caption else None
+            await client.send_media(TO_CHANNEL, media=message.media, caption=caption)
+
+    forwarding_active = False
+
+@Client.on_start
+async def on_start(client, _):
+    logging.info("Bot has started.")
+        
