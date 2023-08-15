@@ -15,7 +15,7 @@ class Bot(Client):
 
     def __init__(self):
         super().__init__(
-            BOT_SESSION,
+            name=SESSION,
             api_id=API_ID,
             api_hash=API_HASH,
             bot_token=BOT_TOKEN,
@@ -39,6 +39,5 @@ class Bot(Client):
       await super().stop()
       logging.info("Bot Stopped 🙄")
 
-bot = Bot()
-bot.run()
-
+app = Bot()
+app.run()
