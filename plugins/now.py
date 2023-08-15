@@ -133,11 +133,3 @@ async def close(bot, update):
     await update.answer()
     await update.message.delete()
 
-app = Client(
-    ":memory:",
-    bot_token=Config.BOT_TOKEN,
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH
-)
-
-app.run()
