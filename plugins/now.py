@@ -66,10 +66,32 @@ async def about(client, message):
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
     logging.info("Received /run command")
-    
+
     # Check if user is in OWNER_ID list
     if str(message.from_user.id) not in OWNER_ID:
         await message.reply("You are not authorized to use this command.")
+        return
+
+    # Check if bot is a member of FROM_CHANNEL
+    try:
+        from_channel = await bot.get_chat(FROM)
+        if not from_channel.is_member:
+            await message.reply("Bot is not a member of the source channel.")
+            return
+    except Exception as e:
+        logging.error(f"Error checking FROM_CHANNEL: {e}")
+        await message.reply("Error checking source channel. Please try again.")
+        return
+
+    # Check if bot is a member of TO_CHANNEL
+    try:
+        to_channel = await bot.get_chat(TO)
+        if not to_channel.is_member:
+            await message.reply("Bot is not a member of the destination channel.")
+            return
+    except Exception as e:
+        logging.error(f"Error checking TO_CHANNEL: {e}")
+        await message.reply("Error checking destination channel. Please try again.")
         return
 
     buttons = [[InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')]]
@@ -80,6 +102,7 @@ async def run(bot, message):
         reply_markup=reply_markup,
         chat_id=message.chat.id
     )
+    
 
     files_count = 0
     async for message in bot.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
