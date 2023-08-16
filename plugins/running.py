@@ -30,7 +30,7 @@ async def run(bot, message):
     )
 
     files_count = 0
-    async for message in User.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
+    async for message in bot.User.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
         try:
             if message.video:
                 file_name = message.video.file_name
@@ -40,7 +40,7 @@ async def run(bot, message):
                 file_name = message.audio.file_name
             else:
                 file_name = None
-            await app.copy_message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id )
+            await bot.copy_message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id )
             files_count += 1
             await asyncio.sleep(1)
         except FloodWait as e:
@@ -60,7 +60,7 @@ async def run(bot, message):
         
 
 
-@Client.on_message(filters.private & filters.command(["go"]))
+@Client.on_message()
 def forward_old_messages(message):
   if message.chat.type == 'private' and message.text == 'forward':
     source_chat_id = FROM_CHANNEL
