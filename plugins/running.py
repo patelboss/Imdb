@@ -40,8 +40,7 @@ async def run(bot, message):
                 file_name = None
             await bot.copy_message(
                 chat_id=TO,
-                from_chat_id=FROM,
-                parse_mode="md",       
+                from_chat_id=FROM,       
                 caption=Translation.CAPTION.format(file_name),
                 message_id=message.message_id
             )
