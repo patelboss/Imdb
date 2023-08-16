@@ -1,5 +1,5 @@
 import os
-from config import Caption
+from config import CAPTION
 import re
 from plugins import commands
 class Translation:
