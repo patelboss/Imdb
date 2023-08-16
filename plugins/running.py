@@ -6,8 +6,8 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from pyrogram.errors import FloodWait
-from config import Config
-from translation import Translation
+from config import *
+from plugins.translation import Translation
 
 FROM = Config.FROM_CHANNEL
 TO = Config.TO_CHANNEL
