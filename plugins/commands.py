@@ -33,8 +33,7 @@ async def help(client, message):
     await client.send_message(
         chat_id=message.chat.id,
         reply_markup=reply_markup,
-        text=Translation.HELP_TXT,
-        parse_mode="html")
+        text=Translation.HELP_TXT)
 
 @Client.on_message(filters.private & filters.command(['about']))
 async def about(client, message):
@@ -47,8 +46,7 @@ async def about(client, message):
         chat_id=message.chat.id,
         reply_markup=reply_markup,
         text=Translation.ABOUT_TXT,
-        disable_web_page_preview=True,
-        parse_mode="html"
+        disable_web_page_preview=True
     )
 
         
