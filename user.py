@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # (c) Dark Angel
 
-from config import *
+from config import SESSION, API_HASH, API_ID
 from config import LOGGER
 from pyrogram import Client, __version__
 
