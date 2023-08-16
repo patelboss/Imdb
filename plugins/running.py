@@ -8,7 +8,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQ
 from pyrogram.errors import FloodWait
 from config import *
 from plugins.translation import Translation
-
+from user import *
 FROM = FROM_CHANNEL
 TO = TO_CHANNEL
 FILTER = FILTER_TYPE
