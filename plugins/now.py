@@ -3,7 +3,12 @@ import asyncio
 import logging
 from config import *
 
-logging.basicConfig(level=logging.INFO)
+# Set up logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Log when the bot starts
+logging.info("Bot started. Listening for commands and messages...")
 
 
 copied_message_count = 0
@@ -49,7 +54,3 @@ async def forward_messages(client):
 
     forwarding_active = False
 
-@Client.on_start
-async def on_start(client, _):
-    logging.info("Bot has started.")
-        
