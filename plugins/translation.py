@@ -1,7 +1,6 @@
 import os
 from config import *
 import re
-from plugins import *
 
 class Translation:
   START_TXT = """<b>Hai {}!!</b>
