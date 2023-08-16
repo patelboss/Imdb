@@ -21,8 +21,7 @@ async def start(client, message):
         chat_id=message.chat.id,
         reply_markup=reply_markup,
         text=Translation.START_TXT.format(
-                message.from_user.first_name),
-        parse_mode="html")
+                message.from_user.first_name))
 
 @Client.on_message(filters.private & filters.command(['help']))
 async def help(client, message):
