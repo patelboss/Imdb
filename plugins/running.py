@@ -9,13 +9,13 @@ from pyrogram.errors import FloodWait
 from config import *
 from plugins.translation import Translation
 
-FROM = Config.FROM_CHANNEL
-TO = Config.TO_CHANNEL
-FILTER = Config.FILTER_TYPE
+FROM = FROM_CHANNEL
+TO = TO_CHANNEL
+FILTER = FILTER_TYPE
 
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
-    if str(message.from_user.id) not in Config.OWNER_ID:
+    if str(message.from_user.id) not in OWNER_ID:
         return
     buttons = [[
         InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')
