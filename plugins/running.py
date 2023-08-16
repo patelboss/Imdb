@@ -58,3 +58,29 @@ async def run(bot, message):
         reply_markup=reply_markup
     )
         
+
+
+@Client.on_message(filters.private & filters.command(["go"]))
+def forward_old_messages(message):
+  if message.chat.type == 'private' and message.text == 'forward':
+    source_chat_id = FROM_CHANNEL
+    target_chat_id = TO_CHANNEL
+    start_message_id = 2
+    end_message_id = 19
+
+    reply_text = f'Forwarding {end_message_id - start_message_id + 1} messages from {source_chat_id} to {target_chat_id}'
+    bot.send_message(
+      message.chat.id,
+      reply_text
+    )
+
+    for message in bot.iter_messages(
+        source_chat_id,
+        from_message_id=start_message_id,
+        to_message_id=end_message_id
+    ):
+      bot.forward_message(
+        target_chat_id,
+        message.chat.id,
+        message.message_id
+      )
