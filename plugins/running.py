@@ -30,7 +30,7 @@ async def run(bot, message):
     )
 
     files_count = 0
-    async for message in Client.User.search_messages(chat_id=FROM,offset=Config.SKIP_NO,limit=Config.LIMIT,filter=FILTER):
+    async for message in bot.User.search_messages(from_chat_id=FROM,offset=Config.SKIP_NO,limit=Config.LIMIT,filter=FILTER):
         try:
             if message.video:
                 file_name = message.video.file_name
@@ -40,8 +40,8 @@ async def run(bot, message):
                 file_name = message.audio.file_name
             else:
                 file_name = None
-            await Client.copy_message(
-                chat_id=TO,
+            await bot.copy_message(
+                to_chat_id=TO,
                 from_chat_id=FROM,       
                 caption=Translation.CAPTION.format(file_name),
                 message_id=message.message_id
