@@ -3,8 +3,8 @@
 # (c) Dark Angel
 
 import os
-from config import Config
-from translation import Translation
+from config import *
+from plugins.translation import Translation
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
