@@ -1,7 +1,7 @@
 import os
 from config import *
 import re
-
+from plugins import commands, running, stoping
 class Translation:
   START_TXT = """<b>Hai {}!!</b>
 <i>I'm Simple Auto file Forward & IMDb Search Bot
