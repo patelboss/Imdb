@@ -18,7 +18,7 @@ def start_forwarding(client, message):
         forwarding_active = True
         asyncio.ensure_future(forward_messages(client))
 
-@Client.on_message(filters.chat(FROM_CHANNEL) & filters.text & ~filters.edited)
+@Client.on_message(filters.chat(FROM_CHANNEL) & filters.text)
 async def forward_messages(client, message):
     global copied_message_count, forwarding_active
     if forwarding_active:
