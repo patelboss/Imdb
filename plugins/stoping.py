@@ -7,6 +7,7 @@ import sys
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery
+from pyrogram import errors
 
 @Client.on_callback_query(filters.regex(r'^stop_btn$'))
 async def stop_button(c: Client, cb: CallbackQuery):
