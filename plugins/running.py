@@ -9,6 +9,8 @@ from pyrogram.errors import FloodWait
 from config import *
 from plugins.translation import Translation
 from user import User
+from pyrogram import errors
+
 FROM = FROM_CHANNEL
 TO = TO_CHANNEL
 FILTER = FILTER_TYPE
@@ -28,7 +30,7 @@ async def run(bot, message):
     )
 
     files_count = 0
-    async for message in bot.search_messages(chat_id=FROM,offset=Config.SKIP_NO,limit=Config.LIMIT,filter=FILTER):
+    async for message in bot.User.search_messages(chat_id=FROM,offset=Config.SKIP_NO,limit=Config.LIMIT,filter=FILTER):
         try:
             if message.video:
                 file_name = message.video.file_name
