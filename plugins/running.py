@@ -8,6 +8,7 @@ from user import User
 from pyrogram import errors
 import logging
 from bot import Bot
+from telegram.client import Telegram
 
 FROM = FROM_CHANNEL
 TO = TO_CHANNEL
