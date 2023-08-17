@@ -2,7 +2,7 @@ from pyrogram import Client
 import tgcrypto
 from config import *
 
-with Client(':memory:', api_id=API_KEY, api_hash=API_HASH) as app:
+with Client(':memory:', api_id=API_ID, api_hash=API_HASH) as app:
     print(app.export_session_string())
     print("""
 Congrats! 
