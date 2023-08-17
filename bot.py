@@ -12,11 +12,11 @@ logging.getLogger("pyrogram").setLevel(logging.ERROR)
 
 class Bot(Client):
     USER: User = None
-    USER_ID: int = None
+    USER_ID: int = OWNER_ID
 
     def __init__(self):
         super().__init__(
-            SESSION,
+            BOT.SESSION,
             api_id=API_ID,
             api_hash=API_HASH,
             bot_token=BOT_TOKEN,
