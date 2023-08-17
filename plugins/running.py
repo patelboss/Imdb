@@ -23,9 +23,9 @@ logger = logging.getLogger(__name__)
 async def run(bot, message):
     logging.info("Received /run command")
     if str(message.from_user.id) not in OWNER_ID:
-         logging.info("user id check")
-
+        await message.reply("You are not authorized to use this command.")
         return
+    
     buttons = [[
         InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')
     ]]
