@@ -7,6 +7,7 @@ from plugins.translation import Translation
 from user import User
 from pyrogram import errors
 import logging
+from bot import Bot
 
 FROM = FROM_CHANNEL
 TO = TO_CHANNEL
