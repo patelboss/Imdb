@@ -40,7 +40,7 @@ async def run(bot, message):
                 file_name = message.audio.file_name
             else:
                 file_name = None
-            await Client.copy_media_group(chat_id=TO, from_chat_id=FROM, message_id=message.message_id )
+            await bot.copy_Message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id )
             files_count += 1
             await asyncio.sleep(1)
         except FloodWait as e:
