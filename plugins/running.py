@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# (c) Dark Angel
-
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
@@ -10,14 +6,25 @@ from config import *
 from plugins.translation import Translation
 from user import User
 from pyrogram import errors
+import logging
 
 FROM = FROM_CHANNEL
 TO = TO_CHANNEL
 FILTER = FILTER_TYPE
 
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
 @Client.on_message(filters.private & filters.command(["run"]))
 async def run(bot, message):
+    logging.info("Received /run command")
     if str(message.from_user.id) not in OWNER_ID:
+         logging.info("user id check")
+
         return
     buttons = [[
         InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')
@@ -31,6 +38,7 @@ async def run(bot, message):
 
     files_count = 0
     async for message in bot.User.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
+        logging.info("Searching Message")
         try:
             if message.video:
                 file_name = message.video.file_name
@@ -40,9 +48,11 @@ async def run(bot, message):
                 file_name = message.audio.file_name
             else:
                 file_name = None
-            await bot.copy_Message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id )
+            await bot.copy_Message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id)
+            logging.info("copy message")
             files_count += 1
             await asyncio.sleep(1)
+            logging.info("sleep 💤")
         except FloodWait as e:
             await asyncio.sleep(e.x)
         except Exception as e:
