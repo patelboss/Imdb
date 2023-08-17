@@ -7,6 +7,7 @@ from plugins.translation import Translation
 from user import User
 from pyrogram import errors
 import logging
+import pytelegrambotapi
 from bot import Bot
 from telegram.client import Telegram
 
