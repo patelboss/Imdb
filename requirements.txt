@@ -5,3 +5,4 @@ TgCrypto
 Pyrogram
 Dnspython
 python-telegram==0.17.0
+pyTelegramBotAPI
