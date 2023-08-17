@@ -44,13 +44,9 @@ async def run(bot, message):
         try:
             if message.video:
                 file_name = message.video.file_name
-            elif message.document:
-                file_name = message.document.file_name
-            elif message.audio:
-                file_name = message.audio.file_name
             else:
                 file_name = None
-            await bot.copy_Message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id)
+            await bot.copy_Message(from_chat_id=FROM, chat_id=TO, message_id=message.message_id)
             logging.info("copy message")
             files_count += 1
             await asyncio.sleep(1)
