@@ -7,7 +7,6 @@ from plugins.translation import Translation
 from user import User
 from pyrogram import errors
 import logging
-import pytelegrambotapi
 from bot import Bot
 from telegram.client import Telegram
 
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 @Client.on_message(filters.private & filters.command(["run"]))
-async def run(bot, message):
+async def run(bot, Client, message):
     logging.info("Received /run command")
     if str(message.from_user.id) not in OWNER_ID:
         await message.reply("You are not authorized to use this command.")
@@ -33,14 +32,14 @@ async def run(bot, message):
         InlineKeyboardButton('🚫 𝐒𝐓𝐎𝐏', callback_data='stop_btn')
     ]]
     reply_markup = InlineKeyboardMarkup(buttons)
-    m = await bot.send_message(
+    m = await Client.send_message(
         text="<i>File Forwording Started😉 Join @World_MovieZz</i>",
         reply_markup=reply_markup,
         chat_id=message.chat.id
     )
 
     files_count = 0
-    async for message in bot.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
+    async for message in Client.USER.search_messages(chat_id=FROM, offset=SKIP_NO, limit=LIMIT, filter=FILTER):
         logging.info("Searching Message")
         try:
             if message.video:
@@ -51,7 +50,7 @@ async def run(bot, message):
                 file_name = message.audio.file_name
             else:
                 file_name = None
-            await bot.copy_Message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id)
+            await Client.copy_Message(chat_id=TO, from_chat_id=FROM, message_id=message.message_id)
             logging.info("copy message")
             files_count += 1
             await asyncio.sleep(1)
