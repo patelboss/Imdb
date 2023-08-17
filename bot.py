@@ -11,9 +11,7 @@ logging.getLogger().setLevel(logging.INFO)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 
 class Bot(Client):
-    USER: User = @Lucifer_film_bot
-    USER_ID: int = OWNER_ID
-
+   
     def __init__(self):
         super().__init__(
             BOT_SESSION,
