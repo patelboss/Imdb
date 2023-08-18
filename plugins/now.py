@@ -55,15 +55,15 @@ async def reply_to_text(client, message):
 # Callback handler for inline keyboard buttons
 @Client.on_callback_query()
 async def callback_query_handler(client, query):
-    title = query.data  # Convert title to lowercase for case-insensitive search
+    logging.info("Callback query received.")  # Add this line
+    title = query.data.lower()
 
     mongo_client = MongoClient(DATABASE_URI)
     db = mongo_client['TelegramBot']
     collection = db['TelegramBot']
 
-    # Use the existing search index to search for similar movie titles
     similar_titles = collection.find({"$text": {"$search": title}})
-    
+
     if similar_titles.count() > 0:
         reply_message = f"Similar titles found in the database:"
         for movie in similar_titles:
