@@ -45,23 +45,26 @@ def perform_imdb_search(search_text):
 # Message handler for regular text messages in groups
 @Client.on_message(filters.group & filters.text)
 async def reply_to_text(client, message):
-    logging.info("recieved search text")
+    logging.info("Received search text: %s", message.text)
     
     search_text = message.text
 
     # Count the number of words in the search_text
     word_count = len(re.findall(r'\w+', search_text))
+    logging.info("Word count: %d", word_count)
 
     if word_count < 20:
+        logging.info("Performing IMDb search for: %s", search_text)
         inline_keyboard = perform_imdb_search(search_text)
 
         if inline_keyboard:
+            logging.info("Sending paginated results...")
             await send_paginated_results(message.chat.id, inline_keyboard)
         else:
             # IMDb search not found, provide a suggestion
             suggestion_message = "No results found for '{}'.".format(search_text)
+            logging.info(suggestion_message)
             await message.reply_text(suggestion_message)
-
 
 # Callback handler for inline keyboard buttons
 @Client.on_callback_query()
