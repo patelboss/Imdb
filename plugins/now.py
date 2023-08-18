@@ -31,30 +31,27 @@ def perform_imdb_search(search_text):
         keyboard = []
         for i, result in enumerate(search_results[:10], start=1):
             title = result['title']
-            keyboard.append([InlineKeyboardButton(f"{i}. {title}", callback_data=title)])
+            year = result.get('year', 'N/A')
+            button_text = f"{i}. {title} - {year}"
+            keyboard.append([InlineKeyboardButton(button_text, callback_data=title)])
 
         return InlineKeyboardMarkup(keyboard)
     else:
         return None
-
+        
 # Message handler for regular text messages
 @Client.on_message(filters.text)
 async def reply_to_text(client, message):
-    content = message.text
+    search_text = message.text
+    inline_keyboard = perform_imdb_search(search_text)
 
-    # Extract text between $ and & using regular expressions
-    match = re.search(r'\$(.*?)\&', content)
-    if match:
-        search_text = match.group(1)
-        inline_keyboard = perform_imdb_search(search_text)
-
-        if inline_keyboard:
-            await message.reply_text("Which One is You Want\n Choose One:", reply_markup=inline_keyboard)
-        else:
-            # IMDb search not found, provide a suggestion
-            suggestion_message = "Spelling Galat Hai!"
-            await message.reply_text(suggestion_message)
-
+    if inline_keyboard:
+        await message.reply_text("Which one do you want? Choose one:", reply_markup=inline_keyboard)
+    else:
+        # IMDb search not found, provide a suggestion
+        suggestion_message = "No results found for '{}'.".format(search_text)
+        await message.reply_text(suggestion_message)
+        
 # Callback handler for inline keyboard buttons
 @Client.on_callback_query()
 async def callback_query_handler(client, query):
@@ -66,11 +63,11 @@ async def callback_query_handler(client, query):
 
     # Check if the movie is in the database
     if collection.find_one({'title': title}):
-        reply_message = f"The movie '{title}' is already in the database."
+        reply_message = f"The movie '{title}' is already in the database.Go To Search Group and search it"
     else:
         # Add movie title to the database
         collection.insert_one({'title': title})
-        reply_message = f"Please, Add '{title}' to the forward This message To\n https://t.me/iAmRashmibot"
+        reply_message = f"Please, Add '{title}' to the database\n forward This message To\n https://t.me/iAmRashmibot"
 
     await query.message.edit_text(reply_message)
 
