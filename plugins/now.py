@@ -73,7 +73,7 @@ async def callback_query_handler(client, query):
                 file_name_link = f"<a href='https://t.me/+MJTE1rPmh0YxN2Y1'>{cleaned_title}</a>"
                 reply_message += f"\n- {file_name_link}"
         else:
-            reply_message = f"No similar titles found in the database."
+            reply_message = f"#Requested_ver {title} ."
 
         await query.message.edit_text(reply_message, disable_web_page_preview=True, parse_mode="HTML")
     except Exception as e:
