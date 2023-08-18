@@ -55,8 +55,9 @@ async def reply_to_text(client, message):
 # Callback handler for inline keyboard buttons
 @Client.on_callback_query()
 async def callback_query_handler(client, query):
-    logging.info("Callback query received.")  # Add this line
+    logging.info("Callback query received.")
     title = query.data.lower()
+    logging.info(f"Title: {title}") 
 
     mongo_client = MongoClient(DATABASE_URI)
     db = mongo_client['TelegramBot']
