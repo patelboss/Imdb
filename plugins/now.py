@@ -40,7 +40,7 @@ def perform_imdb_search(search_text):
         return None
         
 # Message handler for regular text messages
-@Client.on_message(filter.incoming & filter.group)
+@Client.on_message(filters.incoming & filters.group)
 async def reply_to_text(client, message):
     search_text = message.text
 
