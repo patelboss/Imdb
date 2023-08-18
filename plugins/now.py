@@ -118,10 +118,7 @@ async def pagination_callback_handler(client, query):
     except Exception as e:
         logging.error(f"An error occurred: {e}")
 
-# Update pagination buttons in the inline keyboard
-def update_pagination_buttons(inline_keyboard, page_num):
-    logging.info("page number")
-
+async def update_pagination_buttons(inline_keyboard, page_num, chat_id):
     results_per_page = 10
     num_results = len(inline_keyboard.inline_keyboard) - 1  # Subtract 1 for pagination buttons
     num_pages = (num_results + results_per_page - 1) // results_per_page
@@ -140,5 +137,4 @@ def update_pagination_buttons(inline_keyboard, page_num):
     page_keyboard.append(pagination_buttons)
 
     updated_keyboard = InlineKeyboardMarkup(page_keyboard)
-    return updated_keyboard
-
+    await send_paginated_results(chat_id, updated_keyboard)
