@@ -52,25 +52,23 @@ async def reply_to_text(client, message):
         suggestion_message = "No results found for '{}'.".format(search_text)
         await message.reply_text(suggestion_message)
         
-# Callback handler for inline keyboard buttons
 @Client.on_callback_query()
 async def callback_query_handler(client, query):
     logging.info("Callback query received.")
     title = query.data.lower()
-    logging.info(f"Title: {title}") 
 
     try:
         mongo_client = MongoClient(DATABASE_URI)
         db = mongo_client['TelegramBot']
         collection = db['TelegramBot']
 
-        # Use a case-insensitive regular expression to find similar titles
+        # Use a case-insensitive regular expression to find similar titles in the 'file_name' field
         similar_titles = collection.find({"file_name": {"$regex": title, "$options": "i"}})
 
         if similar_titles.count() > 0:
             reply_message = f"Similar titles found in the database:"
             for movie in similar_titles:
-                reply_message += f"\n- {movie['title']}"
+                reply_message += f"\n- {movie['file_name']}"
         else:
             reply_message = f"No similar titles found in the database."
 
