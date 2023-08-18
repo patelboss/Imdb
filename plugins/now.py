@@ -65,7 +65,7 @@ async def callback_query_handler(client, query):
         collection = db['TelegramBot']
 
         # Use a case-insensitive regular expression to find similar titles
-        similar_titles = collection.find({"title": {"$regex": title, "$options": "i"}})
+        similar_titles = collection.find({"file_name": {"$regex": title, "$options": "i"}})
 
         if similar_titles.count() > 0:
             reply_message = f"Similar titles found in the database:"
