@@ -66,7 +66,6 @@ async def callback_query_handler(client, query):
         reply_message = f"The movie '{title}' is already in the database.Go To Search Group and search it"
     else:
         # Add movie title to the database
-        collection.insert_one({'title': title})
         reply_message = f"Please, Add '{title}' to the database\n forward This message To\n https://t.me/iAmRashmibot"
 
     await query.message.edit_text(reply_message)
