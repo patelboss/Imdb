@@ -57,33 +57,29 @@ async def reply_to_text(client, message):
             suggestion_message = "No results found for '{}'.".format(search_text)
             await message.reply_text(suggestion_message)   
      
+# Callback handler for inline keyboard buttons
 @Client.on_callback_query()
 async def callback_query_handler(client, query):
     logging.info("Callback query received.")
-    title = query.data.lower()
+    file_ref = query.data  # Get the selected file_ref (file_id)
 
     try:
+        # Retrieve the file details from the database using the file_ref
         mongo_client = MongoClient(DATABASE_URI)
         db = mongo_client['TelegramBot']
         collection = db['TelegramBot']
 
-        # Use a case-insensitive regular expression to find similar titles in the 'file_name' field
-        similar_titles = collection.find({"file_name": {"$regex": title, "$options": "i"}})
+        file_details = collection.find_one({"file_ref": file_ref})
+        if file_details:
+            file_name = file_details['file_name']
+            file_ref = file_details['file_ref']
+            mime_type = file_details['mime_type']
+            file_caption = file_details['caption']
 
-        if similar_titles.count() > 0:
-            reply_message = f"Similar titles found in the database:"
-            buttons = []
-            for movie in similar_titles:
-                # Remove '@' symbol from the title
-                cleaned_title = movie['file_name'].replace('@', '')
-                file_name_link = f"[{cleaned_title}](https://t.me/+MJTE1rPmh0YxN2Y1)"
-                buttons.append([InlineKeyboardButton(cleaned_title, url="https://t.me/+MJTE1rPmh0YxN2Y1")])
-
-            inline_keyboard = InlineKeyboardMarkup(buttons)
+            # Send the file using its file_id (file_ref)
+            await query.message.reply_document(file_ref, caption=file_caption)
         else:
-            reply_message = f"#Requested_ver {title} ."
-            inline_keyboard = None
-
-        await query.message.edit_text(reply_message, reply_markup=inline_keyboard, disable_web_page_preview=True)
+            reply_message = f"No file found for '{file_ref}'."
+            await query.message.edit_text(reply_message)
     except Exception as e:
         logging.error(f"An error occurred: {e}")
