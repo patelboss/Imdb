@@ -57,16 +57,19 @@ async def reply_to_text(client, message):
 async def callback_query_handler(client, query):
     title = query.data
     ia = IMDb()
+
     mongo_client = MongoClient(DATABASE_URI)
     db = mongo_client['TelegramBot']
     collection = db['TelegramBot']
 
-    # Check if the movie is in the database
-    if collection.find_one({'title': title}):
-        reply_message = f"The movie '{title}' is already in the database.Go To Search Group and search it"
+    # Check if similar movie titles exist in the database
+    similar_titles = collection.find({'title': {'$regex': title, '$options': 'i'}})
+    
+    if similar_titles.count() > 0:
+        reply_message = f"Similar titles found in the database:"
+        for movie in similar_titles:
+            reply_message += f"\n- {movie['title']}"
     else:
-        # Add movie title to the database
-        reply_message = f"Please, Add '{title}' to the database\n forward This message To\n https://t.me/iAmRashmibot"
+        reply_message = f"No similar titles found in the database."
 
     await query.message.edit_text(reply_message)
-
