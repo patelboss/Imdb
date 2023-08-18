@@ -43,15 +43,20 @@ def perform_imdb_search(search_text):
 @Client.on_message(filters.text)
 async def reply_to_text(client, message):
     search_text = message.text
-    inline_keyboard = perform_imdb_search(search_text)
 
-    if inline_keyboard:
-        await message.reply_text("Which one do you want? Choose one:", reply_markup=inline_keyboard)
-    else:
-        # IMDb search not found, provide a suggestion
-        suggestion_message = "No results found for '{}'.".format(search_text)
-        await message.reply_text(suggestion_message)
-        
+    # Count the number of words in the search_text
+    word_count = len(re.findall(r'\w+', search_text))
+
+    if word_count < 20:
+        inline_keyboard = perform_imdb_search(search_text)
+
+        if inline_keyboard:
+            await message.reply_text("Which one do you want? Choose one:", reply_markup=inline_keyboard)
+        else:
+            # IMDb search not found, provide a suggestion
+            suggestion_message = "No results found for '{}'.".format(search_text)
+            await message.reply_text(suggestion_message)   
+     
 @Client.on_callback_query()
 async def callback_query_handler(client, query):
     logging.info("Callback query received.")
