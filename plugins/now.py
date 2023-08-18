@@ -119,6 +119,8 @@ async def pagination_callback_handler(client, query):
         logging.error(f"An error occurred: {e}")
 
 async def update_pagination_buttons(inline_keyboard, page_num, chat_id):
+    logging.info("update paginated button")
+
     results_per_page = 10
     num_results = len(inline_keyboard.inline_keyboard) - 1  # Subtract 1 for pagination buttons
     num_pages = (num_results + results_per_page - 1) // results_per_page
@@ -138,3 +140,12 @@ async def update_pagination_buttons(inline_keyboard, page_num, chat_id):
 
     updated_keyboard = InlineKeyboardMarkup(page_keyboard)
     await send_paginated_results(chat_id, updated_keyboard)
+
+async def send_paginated_results(chat_id, inline_keyboard):
+    logging.info("send paginated results")
+    results_per_page = 10
+    num_results = len(inline_keyboard.inline_keyboard)
+    num_pages = (num_results + results_per_page - 1) // results_per_page
+
+    # Send the first page of results
+    await bot.send_message(chat_id, "Here are the search results:", reply_markup=inline_keyboard)
