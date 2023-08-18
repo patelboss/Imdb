@@ -24,6 +24,8 @@ async def help_command(client, message):
 
 # Function to perform IMDb search and return results as InlineKeyboardMarkup
 def perform_imdb_search(search_text):
+    logging.info("searching.")
+    
     ia = IMDb()
     search_results = ia.search_movie(search_text)
 
@@ -43,6 +45,8 @@ def perform_imdb_search(search_text):
 # Message handler for regular text messages in groups
 @Client.on_message(filters.group & filters.text)
 async def reply_to_text(client, message):
+    logging.info("recieved search text")
+    
     search_text = message.text
 
     # Count the number of words in the search_text
@@ -88,6 +92,9 @@ async def callback_query_handler(client, query):
 # Callback handler for pagination buttons
 @Client.on_callback_query(filters.regex(r'^(prev|next)_\d+$'))
 async def pagination_callback_handler(client, query):
+    logging.info("next")
+
+
     callback_data = query.data
     action, page_num = callback_data.split('_')
 
@@ -110,6 +117,8 @@ async def pagination_callback_handler(client, query):
 
 # Update pagination buttons in the inline keyboard
 def update_pagination_buttons(inline_keyboard, page_num):
+    logging.info("page number")
+
     results_per_page = 10
     num_results = len(inline_keyboard.inline_keyboard) - 1  # Subtract 1 for pagination buttons
     num_pages = (num_results + results_per_page - 1) // results_per_page
