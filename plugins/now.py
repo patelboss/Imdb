@@ -67,14 +67,18 @@ async def callback_query_handler(client, query):
 
         if similar_titles.count() > 0:
             reply_message = f"Similar titles found in the database:"
+            buttons = []
             for movie in similar_titles:
                 # Remove '@' symbol from the title
                 cleaned_title = movie['file_name'].replace('@', '')
-                file_name_link = f"<a href='https://t.me/+MJTE1rPmh0YxN2Y1'>{cleaned_title}</a>"
-                reply_message += f"\n- {file_name_link}"
+                file_name_link = f"[{cleaned_title}](https://t.me/+MJTE1rPmh0YxN2Y1)"
+                buttons.append([InlineKeyboardButton(cleaned_title, url="https://t.me/+MJTE1rPmh0YxN2Y1")])
+
+            inline_keyboard = InlineKeyboardMarkup(buttons)
         else:
             reply_message = f"#Requested_ver {title} ."
+            inline_keyboard = None
 
-        await query.message.edit_text(reply_message, disable_web_page_preview=True, parse_mode="html")
+        await query.message.edit_text(reply_message, reply_markup=inline_keyboard, disable_web_page_preview=True)
     except Exception as e:
         logging.error(f"An error occurred: {e}")
