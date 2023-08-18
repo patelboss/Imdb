@@ -59,17 +59,21 @@ async def callback_query_handler(client, query):
     title = query.data.lower()
     logging.info(f"Title: {title}") 
 
-    mongo_client = MongoClient(DATABASE_URI)
-    db = mongo_client['TelegramBot']
-    collection = db['TelegramBot']
+    try:
+        mongo_client = MongoClient(DATABASE_URI)
+        db = mongo_client['TelegramBot']
+        collection = db['TelegramBot']
 
-    similar_titles = collection.find({"$text": {"$search": title}})
+        # Use a case-insensitive regular expression to find similar titles
+        similar_titles = collection.find({"title": {"$regex": title, "$options": "i"}})
 
-    if similar_titles.count() > 0:
-        reply_message = f"Similar titles found in the database:"
-        for movie in similar_titles:
-            reply_message += f"\n- {movie['title']}"
-    else:
-        reply_message = f"No similar titles found in the database."
+        if similar_titles.count() > 0:
+            reply_message = f"Similar titles found in the database:"
+            for movie in similar_titles:
+                reply_message += f"\n- {movie['title']}"
+        else:
+            reply_message = f"No similar titles found in the database."
 
-    await query.message.edit_text(reply_message)
+        await query.message.edit_text(reply_message)
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
