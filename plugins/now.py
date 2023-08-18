@@ -75,6 +75,6 @@ async def callback_query_handler(client, query):
         else:
             reply_message = f"#Requested_ver {title} ."
 
-        await query.message.edit_text(reply_message, disable_web_page_preview=True, parse_mode="HTML")
+        await query.message.edit_text(reply_message, disable_web_page_preview=True, parse_mode="html")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
