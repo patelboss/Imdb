@@ -68,10 +68,13 @@ async def callback_query_handler(client, query):
         if similar_titles.count() > 0:
             reply_message = f"Similar titles found in the database:"
             for movie in similar_titles:
-                reply_message += f"\n- {movie['file_name']}"
+                # Remove '@' symbol from the title
+                cleaned_title = movie['file_name'].replace('@', '')
+                file_name_link = f"<a href='https://t.me/+MJTE1rPmh0YxN2Y1'>{cleaned_title}</a>"
+                reply_message += f"\n- {file_name_link}"
         else:
             reply_message = f"No similar titles found in the database."
 
-        await query.message.edit_text(reply_message)
+        await query.message.edit_text(reply_message, disable_web_page_preview=True, parse_mode="HTML")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
